@@ -1,2 +1,3 @@
 *.nii.gz
 *.tar.gz
+*.rois_series
