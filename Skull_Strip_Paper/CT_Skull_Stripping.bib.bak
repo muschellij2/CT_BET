@@ -1,0 +1,26 @@
+% This file was created with JabRef 2.9.2.
+% Encoding: MacRoman
+
+@ARTICLE{bet,
+  author = {Smith, Stephen M},
+  title = {Fast robust automated brain extraction},
+  journal = {Human brain mapping},
+  year = {2002},
+  volume = {17},
+  pages = {143--155},
+  number = {3},
+  publisher = {Wiley Online Library}
+}
+
+@ARTICLE{able,
+  author = {Solomon, Jeffrey and Raymont, Vanessa and Braun, Allen and Butman,
+	John A and Grafman, Jordan},
+  title = {User-friendly software for the analysis of brain lesions (ABLe)},
+  journal = {Computer methods and programs in biomedicine},
+  year = {2007},
+  volume = {86},
+  pages = {245--254},
+  number = {3},
+  publisher = {Elsevier}
+}
+
