@@ -1,43 +1,33 @@
-\documentclass{article}
+\documentclass{elsarticle}
 \usepackage[top=1in, left=1in, right=1in, bottom=1in]{geometry}
 
 \usepackage{float, amsmath}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 \usetikzlibrary{positioning}
-\usepackage{hyperref, float, amsmath}
-\usepackage{hyperref}
-%\usepackage{onimage}
-\usepackage{listings}
+\usepackage{float, amsmath}
+\usepackage{url}
 \usepackage{enumerate}
+\usepackage{natbib}
 
 
-\usepackage[
-  natbib = true,
-    backend=bibtex,
-    isbn=false,
-    url=false,
-    doi=false,
-    eprint=false,
-    style=numeric,
-    sorting=nyt,
-    sortcites = true
-]{biblatex}
-\bibliography{CT_Pipeline_l}
-\bibliography{CT_Skull_Stripping}
+%\usepackage[
+%  natbib = true,
+%    backend=bibtex,
+%    isbn=false,
+%    url=false,
+%    doi=false,
+%    eprint=false,
+%    style=numeric,
+%    sorting=nyt,
+%    sortcites = true
+%]{biblatex}
+%\bibliography{CT_Pipeline_l}
+%\bibliography{CT_Skull_Stripping}
 
-
-\lstset{ language=R, basicstyle=\scriptsize\ttfamily, commentstyle=\ttfamily\color{gray}, numbers=left, numberstyle=\ttfamily\color{gray}\footnotesize, stepnumber=1, numbersep=5pt, backgroundcolor=\color{white}, showspaces=false, showstringspaces=false, showtabs=false, frame=single, tabsize=2, captionpos=b, breaklines=true, breakatwhitespace=false, title=\lstname, escapeinside={}, keywordstyle={}, morekeywords={} }
 
 \usepackage{subfig}
 
-\usepackage[all]{hypcap}
-\title{Automatic Brain Extraction of Head CT Images using Established Neuroimaging Software}
-\author{John Muschelli, Natalie Ullman, Ciprian Crainiceanu}
-\begin{document}
-\renewcommand{\thesubfigure}{\Alph{subfigure}}
-
-\maketitle
 
 <<label=opts, results='hide', echo=FALSE, message = FALSE, warning=FALSE>>=
 library(knitr)
@@ -57,6 +47,7 @@ library(reshape2)
 library(ggplot2)
 library(matrixStats)
 library(gridExtra)
+library(qdap)
 options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
@@ -74,15 +65,58 @@ paperdir = file.path(basedir, "Skull_Strip_Paper")
 figdir = file.path(paperdir, "figure")
 
 homedir <- file.path(basedir, study)
-#basedir <- file.path("/Volumes/CT_Data/MISTIE")
+
+rdas = list.files(path=homedir, pattern=".*_CT_.*Header_Info.Rda", 
+                  full.names = TRUE, recursive = TRUE)
+stopifnot(!any(grepl("antry", rdas)))
+rdas = rdas[grepl("Sorted", rdas)]
+rda = data.frame(rda=rdas, stringsAsFactors = FALSE)
+rda$id = basename(rda$rda)
+rda$id = gsub("(.*)_Header_Info.*", "\\1", rda$id)
+
 
 fname = file.path(resdir, "Overlap_Statistics.Rda")
 load(fname)
 
+img.id = unique(basename(ddf$img))
+img.id = nii.stub(img.id)
+rda = rda[ rda$id %in% img.id, ]
+rownames(rda) = NULL
+
+x = sapply(rda$rda, function(x){
+  load(x)
+  st = dcmtables[, "0018-0050-SliceThickness"]
+  ust = unique(st)
+  lust = length(ust)
+if (lust > 1){
+  print(ust)
+}
+  lust
+})
+
+n.var.slice = sum(x > 1)
+
+proper = function(mystr) {
+  x= strsplit(mystr, " ")[[1]]
+  paste(toupper(substr(x, 1, 1)), tolower(substring(x, 2)),
+        sep= "", collapse=" ")
+}
+uid = unique(basename(ddf$img))
+nscans = length(uid)
+num_scans = proper(replace_number(nscans))
+
+pid = gsub("(\\d\\d\\d-(\\d|)\\d\\d\\d).*", "\\1", uid)
+pid = unique(pid)
+npt = length(pid)
+ctr = unique(gsub("(\\d\\d\\d)-.*", "\\1", uid))
+n.ctr = length(ctr)
+
+ddf = ddf[ !grepl("refill", ddf$ssimg), ]
+
 cs =  sapply(ddf, class) == "list"
 cs = names(cs)[cs]
 for (icol in cs){
-	ddf[, icol] = unlist(ddf[, icol])
+  ddf[, icol] = unlist(ddf[, icol])
 }
 
 d = ddf
@@ -149,8 +183,125 @@ long$variable = revalue(long$variable, c("sens" = "Sensitivity",
                          "accur" = "Accuracy", 
                          "dice" = "Dice Similarity Index"))
 
+
+
 @
 
+
+
+<<tests>>=
+
+mytest = function(...){
+  wilcox.test(...)
+}
+all.smooth.tests = ddply(long, .(int), function(df){
+  p.value= ddply(df, .(variable), function(x){
+    stats = lapply(list(median, mean, sd), function(func){
+      res = aggregate(value ~ smooth, func, data=x)
+    })
+    names(stats) = c("median", "mean", "sd")
+    cn = stats[[1]]$smooth
+    stats = lapply(stats, function(x){
+      x$smooth = NULL
+      x = c(t(x))
+      names(x) = cn
+      x
+    })
+    stats = unlist(stats)
+    wt = wilcox.test(value ~ smooth, data=x, paired=TRUE)
+    tt = t.test(value ~ smooth, data=x, paired=TRUE)
+    return(c(wt.p.value=wt$p.value, tt.p.value = tt$p.value,  stats))
+  })
+}, .progress="text")
+
+
+all.int.tests = ddply(long, .(smooth), function(df){
+  df = df[df$int %in% c("0.01", "0.1"), ]
+  p.value= ddply(df, .(variable), function(x){
+    stats = lapply(list(median, mean, sd), function(func){
+      res = aggregate(value ~ int, func, data=x)
+    })
+    names(stats) = c("median", "mean", "sd")
+    cn = stats[[1]]$int
+    stats = lapply(stats, function(x){
+      x$int = NULL
+      x = c(t(x))
+      names(x) = cn
+      x
+    })
+    stats = unlist(stats)
+    wt = wilcox.test(value ~ int, data=x, paired=TRUE)
+    tt = t.test(value ~ int, data=x, paired=TRUE)
+    return(c(wt.p.value=wt$p.value, tt.p.value = tt$p.value,  stats))
+  })
+}, .progress="text")
+
+smooth = all.int.tests[ all.int.tests$smooth == "Smoothed",]
+pval <- function(pval) {
+  x <- ifelse(pval < 0.001, "< 0.001", sprintf("= %03.3f", pval))
+	return(x)
+}
+smooth$wt.p.value = pval(smooth$wt.p.value)
+num = sapply(smooth, class) == "numeric"
+smooth[, num] = round(smooth[, num], 4)
+rownames(smooth) = smooth$variable
+smooth$variable = smooth$smooth = NULL
+smooth.dice = smooth["Dice Similarity Index",]
+@
+
+%\usepackage[all]{hypcap}
+\begin{document}
+\renewcommand{\thesubfigure}{\Alph{subfigure}}
+
+\begin{frontmatter}
+
+\date{}
+
+\title{Validated Automatic Brain Extraction of Head CT Images using FSL-Brain Extraction Tool (BET)}
+%\title{Validated Automatic Brain Extraction of Head CT Images using Established, Open-Source, Neuroimaging Software}
+
+\author[jhsph]{John~Muschelli\corref{cor1}}
+\ead{jmusche1@jhu.edu}
+
+\author[jhmi]{Natalie~Ullman}
+\ead{nullman1@jhmi.edu}
+
+\author[jhsph]{Ciprian~M.~Crainiceanu}
+\ead{ccrainic@jhsph.edu}
+
+\cortext[cor1]{Principal Corresponding Author}
+\address[jhsph]{Department of Biostatistics, Bloomberg School of Public Health, Johns Hopkins University, Baltimore, MD, USA}
+\address[jhmi]{Department of Neurology, Division of Brain Injury Outcomes,  Johns Hopkins Medical Institutions, Baltimore, MD, USA}
+
+\begin{abstract}
+\section{Background}
+Computed Tomography (CT) brain imaging is commonly used in diagnostic settings.  Although CT scans are primarily used in a clinical setting, they can be used to answer research hypotheses.  Methods for brain extraction in head CT images has been informally proposed, but never formally validated.
+
+
+\section{Aim}
+
+To systematically analyze the performance of FSL's brain extraction tool (BET) on head CT images of patients with intracranial hemorrhage by varying its parameters and options after performing CT-specific preprocessing, and quantitatively comparing its results to a manual gold standard.
+
+\section{Methods}
+
+\Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE stroke trial centers. Before running BET, the image was: (1) not smoothed or smoothed using a $1$mm Gaussian smoother, (2) thresholded to $0-100$ Hounsfield units (HU), (3) BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$, (4) holes in the mask were filled.
+For comparison, intracranial masks were manually created for all image volumes from expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Different results were compared using Wilcoxon signed-rank tests.
+
+\section{Results}
+
+Without smoothing the images, BET performed poorly regardless of FI.  After smoothing, performance was high for all metrics for all scans.  All reported measures are on smoothed data.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and compare these FI.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), , and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all high in practice and largely adequate for good brain extraction.
+
+\section{Conclusion}
+
+BET performs well at brain extraction on thresholded, $1$mm smoothed CT images with an FI of $0.01$.  Smoothing before applying BET is an important step not previously discussed.  Analysis code is provided.
+
+\end{abstract}
+\maketitle
+\begin{keyword}
+CT \sep skull stripping \sep brain extraction \sep validation
+\end{keyword}
+
+\end{frontmatter}
 
 
 
@@ -158,24 +309,24 @@ long$variable = revalue(long$variable, c("sens" = "Sensitivity",
 
 X-ray computed tomography (CT) scanning is widely available and is a commonly used diagnostic tool in clinical settings \citep{sahni_management_2007}. Though much analysis of CT images are done by qualitative visual inspection, detailed quantification of information is of interest.  CT scans do not discriminate in the tissues or structures captured; scans have non-brain structures such as the skull, eyes, facial and nasal features, extracranial skin, and more importantly non-human elements captured by the scanner, such as pillows or medical devices.  These objects present a problem for extracting metrics on brain tissue.  We propose a validated automated solution to brain extraction in head CT scans using established neuroimaging software.
 
-In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (CITATIONS).  As such, many pieces of software and algorithms exist to achieve this goal with respect to MRI scans.  We have adapted one algorithm, the Brain Extraction Tool (BET) \citep{smith_fast_2002}, a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from a CT scan.  Variations of this pipeline have been presented before in \citet{able}, and has been replicated in slightly more detail in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images, which is the goal of our study. 
+In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (see \citet{wang2014knowledge} for an extensive list).  As such, many pieces of software and algorithms exist to achieve this goal with respect to MRI scans.  We have adapted one algorithm, the Brain Extraction Tool (BET) \citep{smith_fast_2002}, a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from a CT scan.  Variations of this pipeline have been presented before in \citet{able}, and has been replicated in slightly more detail in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images, which is the goal of our study. 
 
 
 \section{Methods}
 \subsection{ Participants and CT data}
-We used CT images patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator (rtPA) for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) trials.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}. CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
+We used CT images patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) trials.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}. CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
 
 
 \subsection{Imaging Data}
-The study protocol was executed with minor, but important, differences across the Sexpr{n.ctr} sites.  
+The study protocol was executed with minor, but important, differences across the \Sexpr{n.ctr} sites.  
 %%% nEEED TO ADD
 %Scans were acquired using \Sexpr{manu[1]} ($N=\Sexpr{man.tab[1]}$), \Sexpr{manu[2]} ($N=\Sexpr{man.tab[2]}$), \Sexpr{manu[3]} ($N=\Sexpr{man.tab[3]}$), and \Sexpr{manu[4]} ($N=\Sexpr{man.tab[4]}$) scanners. Gantry tilt was observed in \Sexpr{n.gant} scans.  
-Slice thickness of the image varied within the scan for Sexpr{n.var.slice} scans, referred to as variable slice thickness. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain but with 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.
+Slice thickness of the image varied within the scan for \Sexpr{n.var.slice} scans, referred to as variable slice thickness. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain but with 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.
 
 %Different reconstructions of CT images are not available via the data-acquiring center, and 
 
 \subsection{Manual and Automated Brain Extraction}
-We analyzed Sexpr{nscans} scans, corresponding to Sexpr{npt} unique patients.  Brain tissue was manually segmented as a binary mark from DICOM (Digital Imaging and Communications in Medicine) images in the OsiriX imaging software (OsiriX v. 4.1, Pixmeo; Geneva, Switzerland) by one expert reader (NU). 
+We analyzed \Sexpr{nscans} scans, corresponding to \Sexpr{npt} unique patients.  Brain tissue was manually segmented as a binary mark from DICOM (Digital Imaging and Communications in Medicine) images in the OsiriX imaging software (OsiriX v.4.1, Pixmeo; Geneva, Switzerland) by one expert reader (NU). 
 CT brain images and the binary mask were exported from OsiriX to DICOM format.  Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
 Images were converted to the Neuroimaging Informatics Technology Initiative (NIfTI) data format using \verb|dcm2nii| (2009 version, provided with MRIcro \citep{rorden_stereotaxic_2000}).  Images were constrained to values $-1024$ and $3071$ HU to remove potential image rescaling errors and artifacts.  No interpolation was done for images with a variable slice thickness. Thickness was determined from the first slice converted and was assumed homogeneous throughout the image.  The image processing pipeline can be seen in Figure~\ref{fig:framework}.
 
@@ -201,6 +352,9 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \node [block, left = 1.75em of SS_1] (SS_01) {FI=0.01};
 \node [block, right = 1.75em of SS_1] (SS_35) {FI=0.35};
 
+\node [block, below of=SS_1, node distance = 2cm] (Fillin) {Use FSL to fill mask holes};
+
+\node [block, below of=Fillin, node distance = 2cm] (Measures) {Performance Measures};
 
 
 % Draw edges
@@ -212,6 +366,10 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \path [line] (BET) -- (SS_01);
 \path [line] (BET) -- (SS_35);
 \path [line] (BET) -- node {Different FI Value} (SS_1);
+\path [line] (SS_1) -- (Fillin);
+\path [line] (SS_01) -- (Fillin);
+\path [line] (SS_35) -- (Fillin);
+\path [line] (Fillin) -- (Measures);
 \end{tikzpicture}
 \caption{Overall workflow of processing of data.  After the raw data has been processed and areas have been extracted, surfaces can be rendered.  We are concerned with those steps in orange: creating surfaces, and export to the web.  The last branch shows 2 options for export: publishing the figure to the web or enclosing it in a folder with all tools to render it.  The second option would allow users to include these zipped directories as supplementary figures until more widely used.   }
 \label{fig:framework}
@@ -223,35 +381,32 @@ We either applied BET to the this image or smoothed this image with a Gaussian k
 We also present one example case which demonstrates that brain extraction performance was acceptable only after smoothing before BET was applied.  
 
 
-\subsection{Metrics of Brain Extraction Performance}
-Five common measurements of performance were calculated for each image: sensitivity, specificity, accuracy, Dice coefficient, and Jaccard index.  Let $I_{ia}, I_{im}$ be the indicators that voxel $i$ for the automatic and manual masks, respectively, such that $I_{i} = 1$ if voxel $i$ is labeled in the brain mask and $0$ otherwise.  
+\subsection{Measuring and Testing Brain Extraction Performance}
+Five common measurements of performance were calculated for each image: sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  See Inline Supplementary Methods 1 for the calculation of each measure.
 
-A true positive (TP) is defined when: $I_{ia} = 1$ and $I_{im} = 1$, a false positive (FP): $I_{ia} = 1$ and $I_{im} = 0$, a false negative (FN): $I_{ia} = 0$ and $I_{im} = 1$, and a true negative (TN): $I_{ia} = 0$ and $I_{im} = 0$.
-Sensitivity is defined as
-$$
-\frac{\# \text{TP} }{\# \text{TP} + \text{FN}} = \frac{ \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{ \sum_{i=1}^{V} I_{im}}
-$$
-and specificity is defined as
-$$
-\frac{\# \text{TN} }{\# \text{TN} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{ \sum_{i=1}^{V} (1 - I_{im} )}
-$$
-and overall accuracy is:
-$$
-\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} (I_{ia} \times I_{im}) + \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
-$$
+[Insert Supplementary Methods 1 here]
+
+Performance was compared across FI using Wilcoxon signed-rank tests.
 
 
-The Dice index is defined as:
-$$
-\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
-$$
+
 %and the Jaccard index is defined as:
 %$$
 %\frac{ \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im} - \sum_{i=1}^{V} \left(I_{ia} \times I_{im} \right)}
 %$$
 
 \section{Results}
-Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The smoothed pipelines perform better than the unsmoothed pipelines.  Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction in the smoothed pipelines (note the change in the y-axis).  Overall, using an FI of $0.35$ performs worse overall than $0.01$ or $0.1$ for all measures other than specificity.  Using an FI of $0.01$ performs better than $0.1$ and $0.35$, although all FI perform well (above $0.95$ on all measures).  Therefore, smoothing with an FI of $0.01$ is our recommended pipeline for CT brain extraction.
+Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The smoothed pipelines perform better than the unsmoothed pipelines and BET performs poorly on some scans without smoothing.  
+
+Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction in the smoothed pipelines (note the change in the y-axis).  After smoothing, performance was high for all metrics for all scans.  All reported measures are on smoothed data.  
+Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and compare these FI.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), , and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all high in practice and largely adequate for brain extraction.
+
+% Overall, using an FI of $0.35$ performs worse overall than $0.01$ or $0.1$ for all measures other than specificity.  
+% 
+% Without smoothing the images, BET performed poorly regardless of FI.  
+% 
+
+
 
 
 <<figcap_CT_Skull_Stripping_Figure2>>=
@@ -275,10 +430,10 @@ g = qplot(x = variable, y = value, data = long, facets = smooth~ .,
         legend.background = element_rect(fill="transparent"),
         legend.key = element_rect(fill="transparent", 
                                   color="transparent"),
-        legend.text = element_text(size=15), 
-        legend.title = element_text(size=15),
-        title = element_text(size=15),
-        strip.text = element_text(size = 15),
+        legend.text = element_text(size=14), 
+        legend.title = element_text(size=14),
+        title = element_text(size=14),
+        strip.text = element_text(size = 14),
         axis.text  = element_text(size=12))
 print(g)
 dev.off()
@@ -297,56 +452,34 @@ g2 = qplot(x = variable, y = value, data =long[ long$smooth == "Smoothed",],
         legend.background = element_rect(fill="transparent"),
         legend.key = element_rect(fill="transparent", 
                                   color="transparent"),
-        legend.text = element_text(size=15), 
-        legend.title = element_text(size=15),
-        title = element_text(size=15),
-        strip.text = element_text(size = 15),
+        legend.text = element_text(size=14), 
+        legend.title = element_text(size=14),
+        title = element_text(size=14),
+        strip.text = element_text(size = 14),
         axis.text  = element_text(size=12)) + 
   scale_y_continuous(limits=c(.95, 1))
 print(g2)
 dev.off()
 @
 
+<<newplots>>=
+long.st = all.smooth.tests
+long.st = rename(long.st, c(variable="measure"))
+long.st$wt.p.value = long.st$tt.p.value = NULL
+long.st = melt(long.st, 
+                         id.vars = c("int", "measure"))
+long.st$type = gsub("(.*)\\.(.*)", "\\1", long.st$variable)
+long.st$smooth = gsub("(.*)\\.(.*)", "\\2", long.st$variable)
+# long.st$variable = NULL
+long.st =  long.st[!long.st$type %in% c("sd"), ]
+long.st =  long.st[!long.st$int %in% c("0.35"), ]
+@
+<<noplot,eval=FALSE>>=
+g = ggplot(long.st, aes(x=int, y=value)) + facet_grid(smooth ~ measure) + geom_point(aes(colour=type), position=position_dodge(width=0.3)) 
+g
 
-<<tests>>=
-
-mytest = function(...){
-  wilcox.test(...)
-}
-all.wt = ddply(long, .(int), function(df){
-  p.value= ddply(df, .(variable), function(x){
-    wt = mytest(value ~ smooth, data=x)
-    return(wt$p.value)
-  })
-}, .progress="text")
-colnames(all.wt) = c("int", "variable", "p.value")
-
-uint = unique(long$int)
-# eg = expand.grid(int1= uint, int2 = uint, stringsAsFactors = FALSE)
-eg = t(combn(uint, 2))
-class(eg) = "numeric"
-eg = data.frame(eg)
-names(eg) = c("int1", "int2")
-eg = eg[ eg$int1 != eg$int2, ]
-rownames(eg) = NULL
-smooth = long[ long$smooth == "Smoothed", ]
-
-smooth.wt = apply(eg, 1, function(x){
-  int1 = x["int1"]
-  int2 = x["int2"]
-  keep = smooth[ smooth$int %in% c(int1, int2), ]
-  pvals = ddply(keep, .(variable), function(r){
-    wt = mytest(value ~ int, data=r)
-    wt$p.value
-  })
-})
-
-smooth.wt = cbind(eg, t(sapply(smooth.wt, function(x) {
-  xx = x$V1
-  names(xx) = x$variable
-  return(xx)
-})))
-
+g = ggplot(long.st, aes(x=type, y=value)) + facet_grid(smooth ~ measure) + geom_point(aes(colour=int), position=position_dodge(width=0.3)) 
+g
 @
 \begin{figure}
   \subfloat{
@@ -402,12 +535,43 @@ Although Figure~\ref{fig:metrics} displays that using FI of $0.01$ or $0.1$ prov
 \label{fig:ss_example}
 \end{figure}
 
-\section{Discussion}
-We present an automated brain extraction pipeline for CT images that was validated using gold-standard manual segmentations of brain tissues.  Overall, we found that smoothing the data with a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ provides good brain extraction for the sample studied.  We believe this pipeline is generalized for most brain CT scans.  
+\section{Conclusions}
+We present an automated brain extraction pipeline for CT images that was validated using gold-standard manual segmentations of brain tissues.  Overall, we found that smoothing the data with a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ provides good brain extraction for the sample studied.  We believe this pipeline is generalized for most brain CT scans.  These software (FSL and R) are freely available to download under public licenses are open source.  Thus, this pipeline should be widely available. 
+
+With the resulting automated brain masks output from this pipeline, researchers can now do within-tissue operations, such as intensity normalization, brain volume estimation, tissue/tumor/hemorrhage segmentation, etc. 
+
+The \texttt{R} function to perform brain extraction is located at \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.R}. 
+
+
+\section*{Inline Supplementary Methods 1}
+Let $I_{ia}, I_{im}$ be the indicators that voxel $i$ for the automatic and manual masks, respectively, such that $I_{i} = 1$ if voxel $i$ is labeled in the brain mask and $0$ otherwise.  
+
+A true positive (TP) is defined when: $I_{ia} = 1$ and $I_{im} = 1$, a false positive (FP): $I_{ia} = 1$ and $I_{im} = 0$, a false negative (FN): $I_{ia} = 0$ and $I_{im} = 1$, and a true negative (TN): $I_{ia} = 0$ and $I_{im} = 0$.
+Sensitivity is defined as
+$$
+\frac{\# \text{TP} }{\# \text{TP} + \text{FN}} = \frac{ \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{ \sum_{i=1}^{V} I_{im}}
+$$
+and specificity is defined as
+$$
+\frac{\# \text{TN} }{\# \text{TN} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{ \sum_{i=1}^{V} (1 - I_{im} )}
+$$
+and overall accuracy is:
+$$
+\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} (I_{ia} \times I_{im}) + \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
+$$
+
+
+The Dice Similarity Index is defined as:
+$$
+\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
+$$
 
 
 \newpage
-\printbibliography
+\section*{References}
+\bibliographystyle{elsarticle-num-names}
+\bibliography{CT_Skull_Stripping}
+%\printbibliography
 
 
 

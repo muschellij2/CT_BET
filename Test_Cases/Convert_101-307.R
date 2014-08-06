@@ -8,25 +8,23 @@ options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
 options(fsl.path='/usr/local/fsl')
 
 # username <- Sys.info()["user"][[1]]
-rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
-
-ROIformat = FALSE
-study = "Original_Images"
-if (ROIformat) {
-  study = "ROI_images"
-}
-
-homedir <- file.path(rootdir, "Final_Brain_Seg", study)
+rootdir = path.expand("~/CT_Registration/Final_Brain_Seg/Test_Cases")
+homedir <- file.path(rootdir)
 #basedir <- file.path("/Volumes/CT_Data/MISTIE")
 
 setwd(homedir)
+
 
 ids = list.dirs(homedir, recursive=FALSE, full.names=FALSE)
 ids = basename(ids)
 ids = grep("\\d\\d\\d-(\\d|)\\d\\d\\d", ids, value=TRUE)
 length(ids)
 
-iid = 15
+ROIformat = FALSE
+
+iid = 1
+# ids = ids[grep("101-307", ids)]
+ids = ids[grep("102-317", ids)]
 
 for (iid in seq_along(ids)){
   
@@ -94,9 +92,11 @@ for (iid in seq_along(ids)){
       rownames(scen)= NULL
       w = which(!scen$presmooth & scen$refill)
       scen = scen[-w, ]
-            
+          
+      scen = scen[ scen$refill, ]
+      
       for (iimg in seq_along(imgs)){
-
+        
         img = imgs[iimg]
         ofile = nii.stub(img)
         ofile = mid.folder(ofile, "Skull_Stripped")
@@ -113,11 +113,9 @@ for (iid in seq_along(ids)){
           app = "_nopresmooth"
           if (presmooth) app = ""
           
-          
           re_app = ""
           if (refill) re_app = "_refill"
           
-
           
           outfile = paste0(ofile, "_", int, app, re_app)
           x = CT_Skull_Strip(img = img, 
@@ -126,16 +124,23 @@ for (iid in seq_along(ids)){
                              opts=paste0("-f ", int, " -v"),
                              inskull_mesh = FALSE,
                              refill = refill,
-                             refill.thresh = .75, # used 0.5
+                             refill.thresh = .75,
                              presmooth=presmooth)   
           
-
+          
         }
+        
+      }
+#       for (iimg in seq_along(imgs)){
+# 
+#         img = imgs[iimg]
+#         outfile = nii.stub(img)
+#         outfile = mid.folder(outfile, "Skull_Stripped")
+#         outfile = paste0(outfile, "_SS")
+# 
 #         x = CT_Skull_Strip(img = img, 
-#                            outfile = paste0(outfile, "_0.1_smooth"), 
-#                            retimg=FALSE, verbose=TRUE, opts="-f 0.1 -v", 
-#                            inskull_mesh = TRUE,
-#                            presmooth=TRUE)        
+#           outfile = paste0(outfile, "_0.1"), 
+#           retimg=FALSE, verbose=TRUE, opts="-f 0.1 -v")
 # 
 #         x = CT_Skull_Strip(img = img, 
 #           outfile = paste0(outfile, "_0.01"), 
@@ -144,7 +149,7 @@ for (iid in seq_along(ids)){
 #         x = CT_Skull_Strip(img = img, 
 #           outfile = paste0(outfile, "_0.35"), 
 #           retimg=FALSE, verbose=TRUE, opts="-f 0.35 -v")  
-      }
+#       }
         # opts="-f 0.01 -v"
         # retimg=FALSE
         # outfile = paste0(outfile, "_0.01")

@@ -40,7 +40,12 @@ makeint = function(data){
   data$smooth = !grepl("nopresmooth", data$scen)
   data$smooth = revalue(as.character(data$smooth), 
                      c("TRUE"="Smoothed", "FALSE"="Unsmoothed"))
+  data$refill = grepl("refill", data$scen)
+  data$refill = revalue(as.character(data$refill), 
+                        c("TRUE"="Post-Smooth", "FALSE"="No Post-Smooth"))
+  
   data$int = gsub("_nopresmooth", "", data$scen)
+  data$int = gsub("_refill", "", data$int)
   data
 }
 ddf = makeint(ddf)
@@ -104,11 +109,11 @@ long$variable = revalue(long$variable, c("sens" = "Sensitivity",
                          "accur" = "Accuracy", 
                          "dice" = "Dice Similarity Index"))
 
-g = qplot(x = id, y = value, facets = smooth ~ variable , data = long, 
+g = qplot(x = id, y = value, facets = smooth + refill ~ variable , data = long, 
 	colour=int)
 g
 
-g = qplot(x = variable, y = value, data = long, facets = smooth~ .,
+g = qplot(x = variable, y = value, data = long, facets = smooth + refill ~ .,
           colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
   scale_color_discrete("Fractional Intensity") + 
   ggtitle("Performance Metric Distribution for Different Pipelines") +
@@ -124,6 +129,7 @@ g = qplot(x = variable, y = value, data = long, facets = smooth~ .,
 print(g)
 
 g = qplot(x = variable, y = value, data =long[ long$smooth == "Smoothed",],
+          facets = refill ~ .,
           colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
   scale_color_discrete("Fractional Intensity") + 
   ggtitle("Performance Metric Distribution for Different Pipelines") +
@@ -140,7 +146,7 @@ g = qplot(x = variable, y = value, data =long[ long$smooth == "Smoothed",],
 print(g)
 
 dd = ddf[ ddf$smooth == "Smoothed" & ddf$int %in% c("0.01", "0.1") ,]
-g = qplot(x = 1-spec, y = sens, data = dd, facets = int ~ .,
+g = qplot(x = 1-spec, y = sens, data = dd, facets = int + refill~ .,
           colour=id) + guides(colour=FALSE) +
           xlab("1 - Specificity") + ylab("Sensitivity") + 
   scale_y_continuous(limits=c(.95, 1))

@@ -1,0 +1,96 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\url{#1}\endgroup}\fi
+\providecommand{\bibinfo}[2]{#2}
+
+\bibitem[{Sahni and Weinberger(2007)}]{sahni_management_2007}
+\bibinfo{author}{R.~Sahni}, \bibinfo{author}{J.~Weinberger},
+  \bibinfo{title}{Management of intracerebral hemorrhage},
+  \bibinfo{journal}{Vascular Health and Risk Management}
+  \bibinfo{volume}{3}~(\bibinfo{number}{5}) (\bibinfo{year}{2007})
+  \bibinfo{pages}{701--709}, ISSN \bibinfo{issn}{1176-6344},
+  \urlprefix\url{http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2291314/}.
+
+\bibitem[{Wang et~al.(2014)Wang, Nie, Yap, Li, Shi, Geng, Guo, Shen, Initiative
+  et~al.}]{wang2014knowledge}
+\bibinfo{author}{Y.~Wang}, \bibinfo{author}{J.~Nie}, \bibinfo{author}{P.-T.
+  Yap}, \bibinfo{author}{G.~Li}, \bibinfo{author}{F.~Shi},
+  \bibinfo{author}{X.~Geng}, \bibinfo{author}{L.~Guo},
+  \bibinfo{author}{D.~Shen}, \bibinfo{author}{A.~D.~N. Initiative}, et~al.,
+  \bibinfo{title}{Knowledge-guided robust mri brain extraction for diverse
+  large-scale neuroimaging studies on humans and non-human primates},
+  \bibinfo{journal}{PloS one} \bibinfo{volume}{9}~(\bibinfo{number}{1})
+  (\bibinfo{year}{2014}) \bibinfo{pages}{e77810}.
+
+\bibitem[{Smith(2002)}]{smith_fast_2002}
+\bibinfo{author}{S.~M. Smith}, \bibinfo{title}{Fast robust automated brain
+  extraction}, \bibinfo{journal}{Human Brain Mapping}
+  \bibinfo{volume}{17}~(\bibinfo{number}{3}) (\bibinfo{year}{2002})
+  \bibinfo{pages}{143–155}, ISSN \bibinfo{issn}{1097-0193},
+  \doi{\bibinfo{doi}{10.1002/hbm.10062}},
+  \urlprefix\url{http://onlinelibrary.wiley.com/doi/10.1002/hbm.10062/abstract}.
+
+\bibitem[{Jenkinson et~al.(2012)Jenkinson, Beckmann, Behrens, Woolrich, and
+  Smith}]{jenkinson_fsl_2012}
+\bibinfo{author}{M.~Jenkinson}, \bibinfo{author}{C.~F. Beckmann},
+  \bibinfo{author}{T.~E.~J. Behrens}, \bibinfo{author}{M.~W. Woolrich},
+  \bibinfo{author}{S.~M. Smith}, \bibinfo{title}{{FSL}},
+  \bibinfo{journal}{{NeuroImage}} \bibinfo{volume}{62}~(\bibinfo{number}{2})
+  (\bibinfo{year}{2012}) \bibinfo{pages}{782--790}, ISSN
+  \bibinfo{issn}{1053-8119},
+  \doi{\bibinfo{doi}{10.1016/j.neuroimage.2011.09.015}},
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S1053811911010603}.
+
+\bibitem[{Solomon et~al.(2007)Solomon, Raymont, Braun, Butman, and
+  Grafman}]{able}
+\bibinfo{author}{J.~Solomon}, \bibinfo{author}{V.~Raymont},
+  \bibinfo{author}{A.~Braun}, \bibinfo{author}{J.~A. Butman},
+  \bibinfo{author}{J.~Grafman}, \bibinfo{title}{User-friendly software for the
+  analysis of brain lesions (ABLe)}, \bibinfo{journal}{Computer methods and
+  programs in biomedicine} \bibinfo{volume}{86}~(\bibinfo{number}{3})
+  (\bibinfo{year}{2007}) \bibinfo{pages}{245--254}.
+
+\bibitem[{Rorden et~al.(2012)Rorden, Bonilha, Fridriksson, Bender, and
+  Karnath}]{rorden_age-specific_2012}
+\bibinfo{author}{C.~Rorden}, \bibinfo{author}{L.~Bonilha},
+  \bibinfo{author}{J.~Fridriksson}, \bibinfo{author}{B.~Bender},
+  \bibinfo{author}{H.-O. Karnath}, \bibinfo{title}{Age-specific {CT} and {MRI}
+  templates for spatial normalization}, \bibinfo{journal}{{NeuroImage}}
+  \bibinfo{volume}{61}~(\bibinfo{number}{4}) (\bibinfo{year}{2012})
+  \bibinfo{pages}{957--965}, ISSN \bibinfo{issn}{1053-8119},
+  \doi{\bibinfo{doi}{10.1016/j.neuroimage.2012.03.020}},
+  \urlprefix\url{http://www.sciencedirect.com/science/article/pii/S1053811912002935}.
+
+\bibitem[{Mould et~al.(2013)Mould, Carhuapoma, Muschelli, Lane, Morgan,
+  {McBee}, Bistran-Hall, Ullman, Vespa, Martin, Awad, Zuccarello, and
+  Hanley}]{mould_minimally_2013}
+\bibinfo{author}{W.~A. Mould}, \bibinfo{author}{J.~R. Carhuapoma},
+  \bibinfo{author}{J.~Muschelli}, \bibinfo{author}{K.~Lane},
+  \bibinfo{author}{T.~C. Morgan}, \bibinfo{author}{N.~A. {McBee}},
+  \bibinfo{author}{A.~J. Bistran-Hall}, \bibinfo{author}{N.~L. Ullman},
+  \bibinfo{author}{P.~Vespa}, \bibinfo{author}{N.~A. Martin},
+  \bibinfo{author}{I.~Awad}, \bibinfo{author}{M.~Zuccarello},
+  \bibinfo{author}{D.~F. Hanley}, \bibinfo{title}{Minimally Invasive Surgery
+  Plus Recombinant Tissue-type Plasminogen Activator for Intracerebral
+  Hemorrhage Evacuation Decreases Perihematomal Edema},
+  \bibinfo{journal}{Stroke} \bibinfo{volume}{44}~(\bibinfo{number}{3})
+  (\bibinfo{year}{2013}) \bibinfo{pages}{627--634}, ISSN
+  \bibinfo{issn}{0039-2499, 1524-4628},
+  \doi{\bibinfo{doi}{10.1161/STROKEAHA.111.000411}},
+  \urlprefix\url{http://stroke.ahajournals.org/content/44/3/627}.
+
+\bibitem[{Rorden and Brett(2000)}]{rorden_stereotaxic_2000}
+\bibinfo{author}{C.~Rorden}, \bibinfo{author}{M.~Brett},
+  \bibinfo{title}{Stereotaxic Display of Brain Lesions},
+  \bibinfo{journal}{Behavioural Neurology}
+  \bibinfo{volume}{12}~(\bibinfo{number}{4}) (\bibinfo{year}{2000})
+  \bibinfo{pages}{191--200}, ISSN \bibinfo{issn}{0953-4180},
+  \doi{\bibinfo{doi}{10.1155/2000/421719}},
+  \urlprefix\url{http://www.hindawi.com/journals/bn/2000/421719/abs/}.
+
+\end{thebibliography}

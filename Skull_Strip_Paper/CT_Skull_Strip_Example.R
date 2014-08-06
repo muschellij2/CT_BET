@@ -1,4 +1,3 @@
-
 #' @title CT Skull Stripping within R
 #' @description Skull Stripping (using FSL's BET) a CT file using \code{fslr}
 #' functions
@@ -24,6 +23,7 @@
 #' @param verbose (logical) Should diagnostic output be printed?
 #' @param ... additional arguments passed to \code{\link{readNIfTI}}.
 #' @return character or logical depending on intern
+#' @import fslr
 #' @export
 CT_Skull_Strip <- function(
   img, 
@@ -40,7 +40,6 @@ CT_Skull_Strip <- function(
   verbose=TRUE,
   ...
 ){
-  require(fslr)
   if (retimg){
     if (is.null(outfile)) {
       outfile = tempfile()
@@ -64,12 +63,13 @@ CT_Skull_Strip <- function(
   if (verbose){
     cat(paste0("Creating 0 - 100 mask to remask after filling\n"))
   }     
+  bonefile = tempfile()
+  fslbin(outfile, retimg = FALSE, outfile = bonefile, intern=FALSE) 
   
-  bonemask = fslbin(outfile, retimg = TRUE, intern=FALSE) 
-  
-  bonemask = fslfill(file = bonemask, bin=TRUE, 
-                     retimg=TRUE,
-                     intern=FALSE)
+  fslfill(file = bonefile, bin=TRUE, 
+          outfile = bonefile,
+          retimg=FALSE,
+          intern=FALSE)
   
   ### Must prefill for the presmooth - not REALLY necessary, but if you're
   ### smoothing, you likely have noisy data.
@@ -111,7 +111,7 @@ CT_Skull_Strip <- function(
       cat(paste0("Remasking Smoothed Image\n"))
     }    
     run = fslmask(outfile, 
-                  mask = bonemask,
+                  mask = bonefile,
                   outfile = outfile, 
                   retimg = FALSE,
                   intern = FALSE) 
@@ -206,6 +206,10 @@ CT_Skull_Strip <- function(
   return(res)
 }
 
+
+
+# install.packages("fslr")
+# library(fslr)
 
 require(devtools)
 install_github("muschellij2/fslr")
