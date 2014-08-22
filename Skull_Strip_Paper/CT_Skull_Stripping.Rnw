@@ -257,7 +257,7 @@ smooth.dice = smooth["Dice Similarity Index",]
 
 \date{}
 
-\title{Validated Automatic Brain Extraction of Head CT Images using FSL-Brain Extraction Tool (BET)}
+\title{Validated Automatic Brain Extraction of Head CT Images}
 %\title{Validated Automatic Brain Extraction of Head CT Images using Established, Open-Source, Neuroimaging Software}
 
 \author[jhsph]{John~Muschelli\corref{cor1}}
@@ -284,8 +284,8 @@ To systematically analyze the performance of FSL's brain extraction tool (BET) o
 
 \section{Methods}
 
-\Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE stroke trial centers. Before running BET, the image was: (1) not smoothed or smoothed using a $1$mm Gaussian smoother, (2) thresholded to $0-100$ Hounsfield units (HU), (3) BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$, (4) holes in the mask were filled.
-For comparison, intracranial masks were manually created for all image volumes from expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Different results were compared using Wilcoxon signed-rank tests.
+\Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE stroke trial centers. Each image was either not smoothed or smoothed using a $1$mm Gaussian smoother and thresholded using a $0-100$ Hounsfield units (HU) range. BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
+For validation purposes, intracranial masks were manually created for all image volumes from expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Different results were compared using Wilcoxon signed-rank tests.
 
 \section{Results}
 
@@ -293,7 +293,7 @@ Without smoothing the images, BET performed poorly regardless of FI.  After smoo
 
 \section{Conclusion}
 
-BET performs well at brain extraction on thresholded, $1$mm smoothed CT images with an FI of $0.01$.  Smoothing before applying BET is an important step not previously discussed.  Analysis code is provided.
+BET performs well at brain extraction on thresholded, $1$mm smoothed CT images with an FI of $0.01$ or $0.1$.  Smoothing before applying BET is an important step not previously discussed.  Analysis code is provided.
 
 \end{abstract}
 \maketitle
@@ -536,11 +536,11 @@ Although Figure~\ref{fig:metrics} displays that using FI of $0.01$ or $0.1$ prov
 \end{figure}
 
 \section{Conclusions}
-We present an automated brain extraction pipeline for CT images that was validated using gold-standard manual segmentations of brain tissues.  Overall, we found that smoothing the data with a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ provides good brain extraction for the sample studied.  We believe this pipeline is generalized for most brain CT scans.  These software (FSL and R) are freely available to download under public licenses are open source.  Thus, this pipeline should be widely available. 
+We present an automated brain extraction pipeline for CT images that was validated using gold-standard manual segmentations of brain tissues.  Overall, we found that smoothing the data with a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ or $0.1$ provides good brain extraction for the sample studied.  We believe this pipeline is generalized for most brain CT scans.  These software (FSL and R) are freely available to download under public licenses are open source.  Thus, this pipeline should be widely available. 
 
 With the resulting automated brain masks output from this pipeline, researchers can now do within-tissue operations, such as intensity normalization, brain volume estimation, tissue/tumor/hemorrhage segmentation, etc. 
 
-The \texttt{R} function to perform brain extraction is located at \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.R}. 
+The \texttt{R} function to perform brain extraction is located at \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.R} and example bash script \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.sh}
 
 
 \section*{Inline Supplementary Methods 1}
