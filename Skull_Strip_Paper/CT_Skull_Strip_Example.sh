@@ -24,7 +24,7 @@ fslmaths "${img}" -mas "${outfile}_Mask"  "${outfile}"
 ######################
 ## If no pre-smoothing
 ######################
-outfile_nosmooth="/dexter/disk2/smart/stroke_ct/ident/Registration/100-318/Skull_Stripped/100-318_20070723_0957_CT_3_CT_Head-_SS_0.01_nopresmooth"
+outfile_nosmooth="Head_Image_1_SS_0.01_nopresmooth"
 fslmaths "$img" -thr 0.000000 -uthr 100.000000  "${outfile_nosmooth}" 
 # Creating 0 - 100 mask to remask after filling
 fslmaths "${outfile_nosmooth}"  -bin   "${tmpfile}"; 
