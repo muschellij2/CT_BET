@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.7.17)  6 AUG 2014 03:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.7.17)  22 AUG 2014 15:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -633,18 +633,18 @@ tim
 (./CT_Skull_Stripping.aux)
 \openout1 = `CT_Skull_Stripping.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
 
 (/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -744,132 +744,129 @@ Package caption Info: End \AtBeginDocument code.
  [1
 
 
-{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3
+{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2
 
 ]
-Overfull \hbox (4.63892pt too wide) in paragraph at lines 195--195
+Overfull \hbox (4.63892pt too wide) in paragraph at lines 199--199
  [][][][]\OT1/cmr/m/n/10 Performance 
  []
 
-[4] <figure/CT_Skull_Stripping_Figure2.png, id=32, 481.8pt x 481.8pt>
+[3] <figure/CT_Skull_Stripping_Figure2.png, id=29, 481.8pt x 481.8pt>
 File: figure/CT_Skull_Stripping_Figure2.png Graphic file (type png)
 
 <use figure/CT_Skull_Stripping_Figure2.png>
 Package pdftex.def Info: figure/CT_Skull_Stripping_Figure2.png used on input li
-ne 262.
+ne 266.
 (pdftex.def)             Requested size: 225.4804pt x 225.4756pt.
 
-<figure/CT_Skull_Stripping_Figure2b.png, id=34, 481.8pt x 481.8pt>
+<figure/CT_Skull_Stripping_Figure2b.png, id=31, 481.8pt x 481.8pt>
 File: figure/CT_Skull_Stripping_Figure2b.png Graphic file (type png)
 
 <use figure/CT_Skull_Stripping_Figure2b.png>
 Package pdftex.def Info: figure/CT_Skull_Stripping_Figure2b.png used on input l
-ine 267.
+ine 271.
 (pdftex.def)             Requested size: 225.4804pt x 225.4756pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png, id=35, 4215.75pt x
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png, id=32, 4215.75pt x
  4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png Graphic file (
 type png)
  <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask
-.png used on input line 280.
+.png used on input line 284.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png, id=36, 4215.75pt x 
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png, id=33, 4215.75pt x 
 4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png Graphic file (t
 ype png)
  <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.
-png used on input line 285.
+png used on input line 289.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_Mask.png, id=37, 4215.75pt x
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_Mask.png, id=34, 4215.75pt x
  4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_Mask.png Graphic file (
 type png)
  <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_Mask
-.png used on input line 290.
+.png used on input line 294.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_nopresmooth_Mask.png, id=38,
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_nopresmooth_Mask.png, id=35,
  4215.75pt x 4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_nopresmooth_Mask.png Gr
 aphic file (type png)
 
 <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_nopresmooth_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_nopr
-esmooth_Mask.png used on input line 296.
+esmooth_Mask.png used on input line 300.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_nopresmooth_Mask.png, id=39, 
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_nopresmooth_Mask.png, id=36, 
 4215.75pt x 4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_nopresmooth_Mask.png Gra
 phic file (type png)
 
 <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_nopresmooth_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_nopre
-smooth_Mask.png used on input line 301.
+smooth_Mask.png used on input line 305.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
-<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask.png, id=40,
+<figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask.png, id=37,
  4215.75pt x 4215.75pt>
 File: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask.png Gr
 aphic file (type png)
 
 <use figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask.png>
 Package pdftex.def Info: figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopr
-esmooth_Mask.png used on input line 306.
+esmooth_Mask.png used on input line 310.
 (pdftex.def)             Requested size: 145.6229pt x 145.57219pt.
 
+[4]
+Overfull \vbox (28.18994pt too high) has occurred while \output is active []
+
+
 [5 <./figure/CT_Skull_Stripping_Figure2.png> <./figure/CT_Skull_Stripping_Figur
-e2b.png>] [6 <./figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png> <./
-figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png> <./figure/101-307_20
-061110_1638_CT_5_RM_Head_SS_0.35_Mask.png> <./figure/101-307_20061110_1638_CT_5
-_RM_Head_SS_0.01_nopresmooth_Mask.png> <./figure/101-307_20061110_1638_CT_5_RM_
-Head_SS_0.1_nopresmooth_Mask.png> <./figure/101-307_20061110_1638_CT_5_RM_Head_
-SS_0.35_nopresmooth_Mask.png>] [7] (./CT_Skull_Stripping.bbl
+e2b.png> <./figure/101-307_20061110_1638_CT_5_RM_Head_SS_0.01_Mask.png> <./figu
+re/101-307_20061110_1638_CT_5_RM_Head_SS_0.1_Mask.png> <./figure/101-307_200611
+10_1638_CT_5_RM_Head_SS_0.35_Mask.png> <./figure/101-307_20061110_1638_CT_5_RM_
+Head_SS_0.01_nopresmooth_Mask.png> <./figure/101-307_20061110_1638_CT_5_RM_Head
+_SS_0.1_nopresmooth_Mask.png> <./figure/101-307_20061110_1638_CT_5_RM_Head_SS_0
+.35_nopresmooth_Mask.png>] [6] [7] (./CT_Skull_Stripping.bbl
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
-
-Underfull \hbox (badness 1584) in paragraph at lines 60--68
-\OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 10 . 1016 / j . neuroimage . 2012 . 03 . 020[
-]$, URL $\OT1/cmtt/m/n/10 http : / / www . sciencedirect . com / science / arti
-cle / pii /
- []
-
-) [8] (./CT_Skull_Stripping.aux) ) 
+) [8]
+(./CT_Skull_Stripping.aux) ) 
 Here is how much of TeX's memory you used:
- 16946 strings out of 493108
- 351315 string characters out of 6134847
- 423120 words of memory out of 5000000
- 20060 multiletter control sequences out of 15000+600000
+ 16952 strings out of 493108
+ 351501 string characters out of 6134847
+ 423383 words of memory out of 5000000
+ 20066 multiletter control sequences out of 15000+600000
  9355 words of font info for 34 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,9n,67p,876b,742s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2014/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmbx8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmr12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmsy10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmsy6.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmsy7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-ti10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
-i7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8
-.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.
-pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pf
-b>
-Output written on CT_Skull_Stripping.pdf (8 pages, 3142529 bytes).
+ 55i,9n,67p,1322b,742s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2014/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmbx8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmex10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmmi10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmmi8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmr12.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmr7.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr8.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+6.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.
+pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.p
+fb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb
+></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb><
+/usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
+usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on CT_Skull_Stripping.pdf (8 pages, 3146649 bytes).
 PDF statistics:
  123 PDF objects out of 1000 (max. 8388607)
  78 compressed objects within 1 object stream

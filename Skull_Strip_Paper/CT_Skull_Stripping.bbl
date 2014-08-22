@@ -1,4 +1,4 @@
-\begin{thebibliography}{8}
+\begin{thebibliography}{10}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{URL }
@@ -15,6 +15,28 @@
   \bibinfo{volume}{3}~(\bibinfo{number}{5}) (\bibinfo{year}{2007})
   \bibinfo{pages}{701--709}, ISSN \bibinfo{issn}{1176-6344},
   \urlprefix\url{http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2291314/}.
+
+\bibitem[{Chalela et~al.(2007)Chalela, Kidwell, Nentwich, Luby, Butman,
+  Demchuk, Hill, Patronas, Latour, and Warach}]{chalela2007magnetic}
+\bibinfo{author}{J.~A. Chalela}, \bibinfo{author}{C.~S. Kidwell},
+  \bibinfo{author}{L.~M. Nentwich}, \bibinfo{author}{M.~Luby},
+  \bibinfo{author}{J.~A. Butman}, \bibinfo{author}{A.~M. Demchuk},
+  \bibinfo{author}{M.~D. Hill}, \bibinfo{author}{N.~Patronas},
+  \bibinfo{author}{L.~Latour}, \bibinfo{author}{S.~Warach},
+  \bibinfo{title}{Magnetic resonance imaging and computed tomography in
+  emergency assessment of patients with suspected acute stroke: a prospective
+  comparison}, \bibinfo{journal}{The Lancet}
+  \bibinfo{volume}{369}~(\bibinfo{number}{9558}) (\bibinfo{year}{2007})
+  \bibinfo{pages}{293--298}.
+
+\bibitem[{Schellinger et~al.(1999)Schellinger, Jansen, Fiebach, Hacke, and
+  Sartor}]{schellinger1999standardized}
+\bibinfo{author}{P.~D. Schellinger}, \bibinfo{author}{O.~Jansen},
+  \bibinfo{author}{J.~B. Fiebach}, \bibinfo{author}{W.~Hacke},
+  \bibinfo{author}{K.~Sartor}, \bibinfo{title}{A standardized MRI stroke
+  protocol comparison with CT in hyperacute intracerebral hemorrhage},
+  \bibinfo{journal}{Stroke} \bibinfo{volume}{30}~(\bibinfo{number}{4})
+  (\bibinfo{year}{1999}) \bibinfo{pages}{765--768}.
 
 \bibitem[{Wang et~al.(2014)Wang, Nie, Yap, Li, Shi, Geng, Guo, Shen, Initiative
   et~al.}]{wang2014knowledge}

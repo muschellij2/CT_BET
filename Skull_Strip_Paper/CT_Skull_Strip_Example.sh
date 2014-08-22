@@ -1,7 +1,7 @@
 # Thresholding Image to 0-100
-img="/dexter/disk2/smart/stroke_ct/ident/Registration/100-318/100-318_20070723_0957_CT_3_CT_Head-.nii.gz"
+img="Head_Image_1.nii.gz"
 intensity=0.01
-outfile="/dexter/disk2/smart/stroke_ct/ident/Registration/100-318/Skull_Stripped/100-318_20070723_0957_CT_3_CT_Head-_SS_0.01"
+outfile="Head_Image_1_SS_0.01"
 tmpfile=`mktemp`
 
 # Thresholding Image to 0-100

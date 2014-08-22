@@ -6,7 +6,8 @@
 \usetikzlibrary{shapes,arrows}
 \usetikzlibrary{positioning}
 \usepackage{float, amsmath}
-\usepackage{url}
+
+\usepackage[hyphens]{url}
 \usepackage{enumerate}
 \usepackage{natbib}
 
@@ -266,6 +267,9 @@ smooth.dice = smooth["Dice Similarity Index",]
 \author[jhmi]{Natalie~Ullman}
 \ead{nullman1@jhmi.edu}
 
+\author[jhmi]{Daniel~F.~Hanley}
+\ead{dhanley@jhmi.edu}
+
 \author[jhsph]{Ciprian~M.~Crainiceanu}
 \ead{ccrainic@jhsph.edu}
 
@@ -285,11 +289,11 @@ To systematically analyze the performance of FSL's brain extraction tool (BET) o
 \section{Methods}
 
 \Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE stroke trial centers. Each image was either not smoothed or smoothed using a $1$mm Gaussian smoother and thresholded using a $0-100$ Hounsfield units (HU) range. BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
-For validation purposes, intracranial masks were manually created for all image volumes from expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Different results were compared using Wilcoxon signed-rank tests.
+For validation purposes, intracranial masks were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
 
 \section{Results}
 
-Without smoothing the images, BET performed poorly regardless of FI.  After smoothing, performance was high for all metrics for all scans.  All reported measures are on smoothed data.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and compare these FI.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), , and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all high in practice and largely adequate for good brain extraction.
+Smoothing images improves brain extraction results using BET for all metrics and irrespective of the FI threshold.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$.  Thus, all reported results refer only to smoothed data using an FI of $0.01$ or $0.1$.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), with no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  These measures are all very high indicating that a range of FI values may produce visually indistinguishable brain extractions.
 
 \section{Conclusion}
 
@@ -307,9 +311,9 @@ CT \sep skull stripping \sep brain extraction \sep validation
 
 \section{Introduction}
 
-X-ray computed tomography (CT) scanning is widely available and is a commonly used diagnostic tool in clinical settings \citep{sahni_management_2007}. Though much analysis of CT images are done by qualitative visual inspection, detailed quantification of information is of interest.  CT scans do not discriminate in the tissues or structures captured; scans have non-brain structures such as the skull, eyes, facial and nasal features, extracranial skin, and more importantly non-human elements captured by the scanner, such as pillows or medical devices.  These objects present a problem for extracting metrics on brain tissue.  We propose a validated automated solution to brain extraction in head CT scans using established neuroimaging software.
+X-ray computed tomography (CT) scanning is widely available and is a commonly used diagnostic tool in clinical settings \citep{sahni_management_2007, chalela2007magnetic, schellinger1999standardized}. Though analysis of CT images is typically done by qualitative visual inspection, detailed quantification of information using neuroimaging tools is of interest.  The reason for this interest is that qualitative inspection of CT scans provides limited quantifiable information that can be used in research. A fundamental processing step for producing quantifiable, reproducible, information about the brain is to extract the brain from the CT image. This process is called brain extraction or skull stripping.  This step is necessary because CT images often contain non-brain human structures (e.g. skull, eyes, skin) or non-human elements (e.g. pillow, medical devices) that are not pertinent to brain research.  We propose a validated automated solution to brain extraction in head CT scans using established neuroimaging software.
 
-In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (see \citet{wang2014knowledge} for an extensive list).  As such, many pieces of software and algorithms exist to achieve this goal with respect to MRI scans.  We have adapted one algorithm, the Brain Extraction Tool (BET) \citep{smith_fast_2002}, a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from a CT scan.  Variations of this pipeline have been presented before in \citet{able}, and has been replicated in slightly more detail in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images, which is the goal of our study. 
+In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (see \citet{wang2014knowledge} for a good overview of methods).  While an extensive literature accompanied by software exist for brain MRI scans, the same is not true for brain CT.  Inspired by the brain MRI literature and software tools, we have adapted the Brain Extraction Tool (BET) \citep{smith_fast_2002}, a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from a CT scan.  Variations of this pipeline have been presented before in \citet{able}, and have been replicated in more detail in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images, which is the goal of our study. 
 
 
 \section{Methods}
@@ -326,8 +330,8 @@ Slice thickness of the image varied within the scan for \Sexpr{n.var.slice} scan
 %Different reconstructions of CT images are not available via the data-acquiring center, and 
 
 \subsection{Manual and Automated Brain Extraction}
-We analyzed \Sexpr{nscans} scans, corresponding to \Sexpr{npt} unique patients.  Brain tissue was manually segmented as a binary mark from DICOM (Digital Imaging and Communications in Medicine) images in the OsiriX imaging software (OsiriX v.4.1, Pixmeo; Geneva, Switzerland) by one expert reader (NU). 
-CT brain images and the binary mask were exported from OsiriX to DICOM format.  Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
+We analyzed \Sexpr{nscans} scans, corresponding to \Sexpr{npt} unique patients.  Brain tissue was manually segmented as a binary mask from DICOM (Digital Imaging and Communications in Medicine) images using the OsiriX imaging software (OsiriX v.4.1, Pixmeo; Geneva, Switzerland) by one expert reader. 
+CT brain images and the binary mask obtained using manual segmentation were exported from OsiriX to DICOM format.  Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
 Images were converted to the Neuroimaging Informatics Technology Initiative (NIfTI) data format using \verb|dcm2nii| (2009 version, provided with MRIcro \citep{rorden_stereotaxic_2000}).  Images were constrained to values $-1024$ and $3071$ HU to remove potential image rescaling errors and artifacts.  No interpolation was done for images with a variable slice thickness. Thickness was determined from the first slice converted and was assumed homogeneous throughout the image.  The image processing pipeline can be seen in Figure~\ref{fig:framework}.
 
 
@@ -376,7 +380,7 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \end{figure}
 
 Images were thresholded to a brain tissue range ($0$-$100$ HU).
-We either applied BET to the this image or smoothed this image with a Gaussian kernel ($\sigma=1$mm, using FSL), re-thresholded to $0$-$100$ HU and then applied BET.  When BET was applied, we varied fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  
+We applied BET to this raw image and to the smoothed image using a Gaussian kernel ($\sigma=1$mm, using FSL), followed by a re-thresholding of the smooth image using the $0$-$100$ HU range.  When BET was applied, we varied fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  
 
 We also present one example case which demonstrates that brain extraction performance was acceptable only after smoothing before BET was applied.  
 
@@ -386,7 +390,7 @@ Five common measurements of performance were calculated for each image: sensitiv
 
 [Insert Supplementary Methods 1 here]
 
-Performance was compared across FI using Wilcoxon signed-rank tests.
+We took the paired difference of each measure using different pipelines (e.g. $0.01$ vs. $0.1$, smoothed data).  We tested these differences using the Wilcoxon signed-rank test.
 
 
 
@@ -396,10 +400,10 @@ Performance was compared across FI using Wilcoxon signed-rank tests.
 %$$
 
 \section{Results}
-Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The smoothed pipelines perform better than the unsmoothed pipelines and BET performs poorly on some scans without smoothing.  
+Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The smoothed pipelines (top) perform better than the unsmoothed pipelines (bottom) and BET performs poorly on some scans without smoothing.  
 
-Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction in the smoothed pipelines (note the change in the y-axis).  After smoothing, performance was high for all metrics for all scans.  All reported measures are on smoothed data.  
-Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and compare these FI.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), , and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all high in practice and largely adequate for brain extraction.
+Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction for the pipelines using smoothed brain data.   Because the performance for all metrics was high when using smooth images, it was necessary change the y-axis from $[0,1]$ to $[0.95,1]$. 
+Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and compare these results for these values of FI when BET was applied to smooth images.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all high in practice and largely adequate for brain extraction.
 
 % Overall, using an FI of $0.35$ performs worse overall than $0.01$ or $0.1$ for all measures other than specificity.  
 % 
@@ -411,7 +415,7 @@ Using an FI of $0.01$ or $0.1$ performed better than $0.35$; we will focus and c
 
 <<figcap_CT_Skull_Stripping_Figure2>>=
 CT_Skull_Stripping_Figure2 = paste0("{\\bf Performance Metric Distribution for Different Pipelines.} ", 
-"Panel~\\protect\\subref*{smoothed} displays the boxplots for performance measures when running the pipeline with a different fractional intensity (FI), using smoothed data (top) or unsmoothed data (bottom).  Panel~\\protect\\subref*{unsmoothed} presents the smooothed data only, rescaled to show discrimination between the differernt FI.", "Overall, FI of $0.01$ and $0.1$ perform better than $0.35$ in all categories other than specificity.  Using smoothed data improves performance in all performance metrics, markedly when an FI of $0.35$ is used.  Panel~\\protect\\subref*{unsmoothed} demonstrates that using an FI of $0.01$ on smoothed data is the best pipeline.  " )
+"Panel~\\protect\\subref*{unsmoothed} displays the boxplots for performance measures when running the pipeline with a different fractional intensity (FI), using smoothed data (top) or unsmoothed data (bottom).  Panel~\\protect\\subref*{smoothed} presents the smooothed data only, rescaled to show discrimination between the different FI.", " Overall, FI of $0.01$ and $0.1$ perform better than $0.35$ in all categories other than specificity.  Using smoothed data improves performance in all performance metrics, markedly when an FI of $0.35$ is used.  Panel~\\protect\\subref*{smoothed} demonstrates that using an FI of $0.01$ on smoothed data is the best pipeline.  " )
 @
 
 <<CT_Skull_Stripping_Figure2, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2>>=
@@ -435,6 +439,10 @@ g = qplot(x = variable, y = value, data = long, facets = smooth~ .,
         title = element_text(size=14),
         strip.text = element_text(size = 14),
         axis.text  = element_text(size=12))
+d = data.frame(label="A", smooth="Unsmoothed")
+g = g + geom_text(data=d, x = 4, y = 0.2, size=20,
+                  aes(label=label), colour="black")
+
 print(g)
 dev.off()
 
@@ -458,6 +466,9 @@ g2 = qplot(x = variable, y = value, data =long[ long$smooth == "Smoothed",],
         strip.text = element_text(size = 14),
         axis.text  = element_text(size=12)) + 
   scale_y_continuous(limits=c(.95, 1))
+d = data.frame(label="B", smooth="Unsmoothed")
+g2 = g2 + geom_text(data=d, x = 4, y = 0.953, size=20,
+                  aes(label=label), colour="black")
 print(g2)
 dev.off()
 @
@@ -483,12 +494,12 @@ g
 @
 \begin{figure}
   \subfloat{
-  \label{smoothed}
+  \label{unsmoothed}
 \includegraphics[width=.48\textwidth]{figure/CT_Skull_Stripping_Figure2.png}
 }
 \hfill
   \subfloat{
-  \label{unsmoothed}
+  \label{smoothed}
 \includegraphics[width=.48\textwidth]{figure/CT_Skull_Stripping_Figure2b.png}
 }
 \caption{\Sexpr{CT_Skull_Stripping_Figure2}}
@@ -540,30 +551,38 @@ We present an automated brain extraction pipeline for CT images that was validat
 
 With the resulting automated brain masks output from this pipeline, researchers can now do within-tissue operations, such as intensity normalization, brain volume estimation, tissue/tumor/hemorrhage segmentation, etc. 
 
-The \texttt{R} function to perform brain extraction is located at \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.R} and example bash script \url{https://github.com/muschellij2/CT_BET/blob/master/Skull_Strip_Paper/CT_Skull_Strip_Example.sh}
+The \texttt{R} function to perform brain extraction is located at
+\url{http://bit.ly/CTBET_RCODE} and example bash script
+\url{http://bit.ly/CTBET_BASH}.
 
+\section*{Acknowledgements}
+We thank the patients and families who volunteered for this study and Genentech Inc. for the donation of the study drug (Alteplase).
+
+\section*{Sources of Funding}
+The project described was supported by the NIH grant RO1EB012547 from the National Institute of Biomedical Imaging And Bioengineering, T32AG000247 from the National Institute on Aging, R01NS046309, RO1NS060910, RO1NS085211, R01NS046309, U01NS080824 and U01NS062851 from the National Institute of Neurological Disorders and Stroke, and RO1MH095836 from the National Institute of Mental Health. Minimally Invasive Surgery and rt-PA in ICH Evacuation Phase II (MISTIE II) was supported by grants R01NS046309 and U01 NS062851 awarded to Dr. Daniel Hanley from the National Institutes of Health (NIH)/National Institute of Neurological Disorders and Stroke (NINDS).  ICES was led by Co-Principal Investigator Dr. Paul Vespa at the University of California Los Angeles. Minimally Invasive Surgery and rt-PA in ICH Evacuation Phase III (MISTIE III) is supported by the grant U01 NS080824 awarded to Dr. Daniel Hanley from the National Institutes of Health (NIH)/National Institute of Neurological Disorders and Stroke (NINDS). Clot Lysis: Evaluating Accelerated Resolution of Intraventricular Hemorrhage Phase III (CLEAR III) is supported by the grant U01 NS062851 awarded to Dr. Daniel Hanley from the National Institutes of Health (NIH)/National Institute of Neurological Disorders and Stroke (NINDS). 
 
 \section*{Inline Supplementary Methods 1}
-Let $I_{ia}, I_{im}$ be the indicators that voxel $i$ for the automatic and manual masks, respectively, such that $I_{i} = 1$ if voxel $i$ is labeled in the brain mask and $0$ otherwise.  
+Let $I_{ia}, I_{im}$ be the indicators that voxel $i$ is labeled to be in the brain mask for the automatic and manual masks, respectively.  
 
-A true positive (TP) is defined when: $I_{ia} = 1$ and $I_{im} = 1$, a false positive (FP): $I_{ia} = 1$ and $I_{im} = 0$, a false negative (FN): $I_{ia} = 0$ and $I_{im} = 1$, and a true negative (TN): $I_{ia} = 0$ and $I_{im} = 0$.
+A voxel $i$ is labeled to be a true positive (TP) when $I_{ia} = 1$ and $I_{im} = 1$, false positive (FP) when $I_{ia} = 1$ and $I_{im} = 0$, false negative (FN) when $I_{ia} = 0$ and $I_{im} = 1$, and true negative (TN) when $I_{ia} = 0$ and $I_{im} = 0$.  The number of true positive voxels is defined as: 
+$$
+\sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right)
+$$
 Sensitivity is defined as
 $$
-\frac{\# \text{TP} }{\# \text{TP} + \text{FN}} = \frac{ \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{ \sum_{i=1}^{V} I_{im}}
+\frac{\# \text{TP} }{\# \text{TP} + \text{FN}} = \frac{ \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{ \sum_{i=1}^{V} I_{im}},
 $$
-and specificity is defined as
+specificity is defined as
 $$
-\frac{\# \text{TN} }{\# \text{TN} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{ \sum_{i=1}^{V} (1 - I_{im} )}
+\frac{\# \text{TN} }{\# \text{TN} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left\{ (1-I_{ia}) \times (1- I_{im} ) \right\} }{ \sum_{i=1}^{V} (1 - I_{im} )},
 $$
-and overall accuracy is:
+overall accuracy is defined as:
 $$
-\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} (I_{ia} \times I_{im}) + \left( (1-I_{ia}) \times (1- I_{im} ) \right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
+\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left[ (I_{ia} \times I_{im}) + \left\{ (1-I_{ia}) \times (1- I_{im} ) \right\} \right] }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}},
 $$
-
-
-The Dice Similarity Index is defined as:
+and the Dice Similarity Index (DSI) is defined as
 $$
-\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}
+\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}.
 $$
 
 
