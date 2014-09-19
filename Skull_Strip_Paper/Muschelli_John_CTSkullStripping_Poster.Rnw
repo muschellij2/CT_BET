@@ -150,7 +150,7 @@ dtemp <- dim(tmp) # get dimensions
 contour3d(tmp, x=1:dtemp[1], y=1:dtemp[2], z=1:dtemp[3], level = 4500, alpha = 0.15) ### make the surface object - RGL renders
 contour3d(tmp, level = c(8200, 8250), alpha = c(0.5, 0.8), add = TRUE, color=c("yellow", "red")) ### this would be the ``activation'' or surface you want to render 
 text3d(x=dtemp[1]/2, y=dtemp[2]/2, z = dtemp[3]*0.98, text="Top") ### add text
-text3d(x=dtemp[1]*0.98, y=dtemp[2]/2, z = dtemp[3]/2, text="Right")
+text3d(x=-0.98, y=dtemp[2]/2, z = dtemp[3]/2, text="Right")
 writeWebGL_split(dir=file.path(outdir, "webGL"), width=700, height=500, template= file.path(outdir, "my_template.html"))### export this to a webpage
 @
 
@@ -166,7 +166,7 @@ dtemp <- \hlfunctioncall{dim}(tmp)  \hlcomment{# get dimensions}
 \hlfunctioncall{contour3d}(tmp, level = \hlfunctioncall{c}(8200, 8250), alpha = \hlfunctioncall{c}(0.5, 0.8), add = TRUE, color = \hlfunctioncall{c}(\hlstring{"yellow"}, 
     \hlstring{"red"}))  \hlcomment{### this would be the ``activation'' or surface you want to render}
 \hlfunctioncall{text3d}(x = dtemp[1]/2, y = dtemp[2]/2, z = dtemp[3] * 0.98, text = \hlstring{"Top"})  \hlcomment{### add text}
-\hlfunctioncall{text3d}(x = dtemp[1] * 0.98, y = dtemp[2]/2, z = dtemp[3]/2, text = \hlstring{"Right"})
+\hlfunctioncall{text3d}(x = - 0.98, y = dtemp[2]/2, z = dtemp[3]/2, text = \hlstring{"Right"})
 \hlfunctioncall{writeWebGL_split}(dir = \hlfunctioncall{file.path}(outdir, \hlstring{"webGL"}), width = 700, height = 500, 
     template = \hlfunctioncall{file.path}(outdir, \hlstring{"my_template.html"}))  \hlcomment{### export this to a webpage}
 \end{alltt}
