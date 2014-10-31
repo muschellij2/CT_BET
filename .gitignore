@@ -1,4 +1,5 @@
 *.nii.gz
 *.tar.gz
 *.rois_series
+*_Header_Info.Rda
 results/*.png
