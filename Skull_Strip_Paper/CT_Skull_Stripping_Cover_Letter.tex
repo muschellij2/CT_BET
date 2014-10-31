@@ -1,0 +1,113 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Stylish Cover Letter
+% LaTeX Template
+% Version 1.0 (28/5/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Stefano (http://stefano.italians.nl/archives/63)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% IMPORTANT: THIS TEMPLATE NEEDS TO BE COMPILED WITH XeLaTeX
+%
+% The two fonts used in this template: Adobe Garamond Pro and Gill Sans
+% do not come with Windows by default. You will need to download them in
+% order to get an output as in the preview PDF. Otherwise, change those 
+% fonts to fonts that do come with Windows or comment out the lines to use 
+% the default font.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{scrlttr2}
+
+\usepackage{fontspec} % Allows font customization
+\usepackage{marvosym} % Allows the use of symbols
+\usepackage[english]{babel} % Required to compile in Windows
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont {Adobe Garamond Pro} % Main document font
+\setsansfont {Gill Sans} % Used in the from address line above the to address
+
+\renewcommand{\normalsize}{\fontsize{12.5}{17}\selectfont} % Sets the font size and leading
+
+%----------------------------------------------------------------------------------------
+%  PERSONAL INFORMATION
+%----------------------------------------------------------------------------------------
+
+\setkomavar{fromname}{John Muschelli} % Your name
+\setkomavar{fromaddress}{615 N Wolfe St\\Baltimore, MD 21231\\USA} % Your address
+\setkomavar{fromemail}{jmuschel@jshph.edu} % Your email address
+\setkomavar{place}{} % City written before the date, put your city here if you want this
+\setkomavar{signature}{John Smith} % Your name as you want it to appear in the signature
+
+% These are not used in this document, uncomment if you would like to use them and refer to them as \usekomavar{name}
+%\setkomavar{fromfax}{+1 (1)23 456789} % Your fax number
+%\setkomavar{fromurl}{http://www.johnsmith.com} % Your personal website
+%\setkomavar{frombank}{Postbank 9307157}
+
+%----------------------------------------------------------------------------------------
+%  HEADER SECTION
+%----------------------------------------------------------------------------------------
+
+%\firsthead{
+%\centering
+%{\addfontfeature{LetterSpace=20.0}\fontsize{36}{36}\selectfont\scshape \usekomavar{fromname}}\\[5mm]
+%\fontsize{21}{21}\selectfont\scshape Programmer at Initech } % Your current job title
+
+%----------------------------------------------------------------------------------------
+%  FOOTER SECTION
+%----------------------------------------------------------------------------------------
+
+\firstfoot{
+\centering
+\addfontfeature{LetterSpace=20.0}\scshape
+{
+\renewcommand{\\}{\ {\large\textperiodcentered}\ }
+\usekomavar{fromaddress}
+}\\
+{\Large\Letter} \usekomavar{fromemail} \ {\Large\Telefon} \usekomavar{fromphone} % If you want your fax number or website URL showing, add it here; you may need to play around with spacing
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+% COVER LETTER CONTENTS
+%----------------------------------------------------------------------------------------
+
+\begin{letter}{
+NeuroImage Editor
+}
+
+\setkomavar{subject}{Cover Letter} % This is the bold text saying 'Cover Letter', remove it if you don't like it
+
+\opening{Dear Sir or Madam,}
+
+This study constitutes the first study directly comparing brain extraction in CT images to a gold standard manual segmentation.  
+
+I believe that it is appropriate for NeuroImage because we have provided a validation for procedures previously discussed in NeuroImage (doi:10.1016/j.neuroimage.2012.03.020).  We provide a fundamental processing step in extracting quantitative information from brain tissue in a CT scan using existing, open-source, free software (FSL) and provide the code for readers.
+
+
+Thank you for your consideration.
+ \\ \\ \\
+John Muschelli, ScM\\
+PhD Student\\
+Department of Biostatistics \\
+Johns Hopkins Bloomberg School of Public Health
+
+
+%----------------------------------------------------------------------------------------
+
+\end{letter}
+\end{document}

@@ -17,6 +17,7 @@ library(reshape2)
 library(ggplot2)
 library(matrixStats)
 library(gridExtra)
+library(qdap)
 options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
@@ -32,19 +33,112 @@ basedir = file.path(rootdir, "Final_Brain_Seg")
 resdir = file.path(basedir, "results")
 paperdir = file.path(basedir, "Skull_Strip_Paper")
 figdir = file.path(paperdir, "figure")
+progdir = file.path(basedir, "programs")
+
+new.ids = readLines(file.path(progdir, "newid_list.txt"))
 
 homedir <- file.path(basedir, study)
-#basedir <- file.path("/Volumes/CT_Data/MISTIE")
+
+rdas = list.files(path=homedir, pattern=".*_CT_.*Header_Info.Rda", 
+                  full.names = TRUE, recursive = TRUE)
+gant = rdas[grepl("antry", rdas)]
+gant = gsub("_ungantry", "", gant)
+rdas = rdas[ ! (rdas %in% gant)]
+# stopifnot(!any(grepl("antry", rdas)))
+rdas = rdas[grepl("Sorted", rdas)]
+rda = data.frame(rda=rdas, stringsAsFactors = FALSE)
+rda$id = basename(rda$rda)
+rda$id = gsub("(.*)_Header_Info.*", "\\1", rda$id)
+rda$id = gsub("_ungantry", "", rda$id)
+
+runold = TRUE
+if (runold) rda = rda[ !(rda$id %in% new.ids), ]
+
+
+get.val = function(rda, val){
+  if ("dcmtables" %in% ls()) rm(list="dcmtables")
+  ungant.rda = gsub("_Header_Info\\.Rda", 
+    "_ungantry_Header_Info\\.Rda", 
+    rda)
+  if (file.exists(ungant.rda)) rda = ungant.rda
+  load(rda)
+  cn = colnames(dcmtables)
+  n.slice = length(unique(dcmtables[, "0018-0050-SliceThickness"]))
+  co.kern = unique(dcmtables[, val])
+  co.kern$n.slice = n.slice
+  stopifnot(nrow(co.kern) == 1)
+  co.kern
+}
 
 fname = file.path(resdir, "Overlap_Statistics.Rda")
 load(fname)
+
+img.id = unique(basename(ddf$img))
+img.id = nii.stub(img.id)
+rda = rda[ rda$id %in% img.id, ]
+rownames(rda) = NULL
+
+##############################
+# Gantry tilt numbers and manufacturer
+##############################
+img.data = ldply(.data=rda$rda,  get.val, 
+  val=c("0018-1210-ConvolutionKernel", 
+  "0008-0070-Manufacturer", 
+  "0018-1120-GantryDetectorTilt"), 
+.progress="text")
+
+colnames(img.data) = c("kern", "man", "tilt", "nslices")
+img.data$rda  = rda$rda
+img.data$tilt = as.numeric(img.data$tilt)
+# data$rda = df$rda
+
+man.tab = sort(table(img.data$man), decreasing=TRUE)
+stopifnot(length(man.tab) == 3)
+manu= names(man.tab)
+manu[manu == 'TOSHIBA'] = "Toshiba"
+manu[manu == 'SIEMENS'] = "Siemens"
+
+check.na = function(x){
+  stopifnot(all(!is.na(x))) 
+}
+check.na(img.data$tilt)
+n.gant = sum(img.data$tilt != 0)
+
+
+x = sapply(rda$rda, function(x){
+  load(x)
+  st = dcmtables[, "0018-0050-SliceThickness"]
+  ust = unique(st)
+  lust = length(ust)
+if (lust > 1){
+  print(ust)
+}
+  lust
+})
+
+n.var.slice = sum(x > 1)
+
+proper = function(mystr) {
+  x= strsplit(mystr, " ")[[1]]
+  paste(toupper(substr(x, 1, 1)), tolower(substring(x, 2)),
+        sep= "", collapse=" ")
+}
+uid = unique(basename(ddf$img))
+nscans = length(uid)
+num_scans = proper(replace_number(nscans))
+
+pid = gsub("(\\d\\d\\d-(\\d|)\\d\\d\\d).*", "\\1", uid)
+pid = unique(pid)
+npt = length(pid)
+ctr = unique(gsub("(\\d\\d\\d)-.*", "\\1", uid))
+n.ctr = length(ctr)
 
 ddf = ddf[ !grepl("refill", ddf$ssimg), ]
 
 cs =  sapply(ddf, class) == "list"
 cs = names(cs)[cs]
 for (icol in cs){
-	ddf[, icol] = unlist(ddf[, icol])
+  ddf[, icol] = unlist(ddf[, icol])
 }
 
 d = ddf
@@ -113,57 +207,6 @@ long$variable = revalue(long$variable, c("sens" = "Sensitivity",
 
 
 
-## ----figcap_CT_Skull_Stripping_Figure2-----------------------------------
-CT_Skull_Stripping_Figure2 = paste0("{\\bf Performance Metric Distribution for Different Pipelines.} ", 
-"Panel~\\protect\\subref*{smoothed} displays the boxplots for performance measures when running the pipeline with a different fractional intensity (FI), using smoothed data (top) or unsmoothed data (bottom).  Panel~\\protect\\subref*{unsmoothed} presents the smooothed data only, rescaled to show discrimination between the differernt FI.", "Overall, FI of $0.01$ and $0.1$ perform better than $0.35$ in all categories other than specificity.  Using smoothed data improves performance in all performance metrics, markedly when an FI of $0.35$ is used.  Panel~\\protect\\subref*{unsmoothed} demonstrates that using an FI of $0.01$ on smoothed data is the best pipeline.  " )
-
-
-## ----CT_Skull_Stripping_Figure2, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2----
-
-#g = qplot(x = id, y = value, facets = smooth ~ variable , data = long, 
-#  colour=int)
-#g
-
-pngname = file.path(figdir, "CT_Skull_Stripping_Figure2.png")
-png(pngname)
-g = qplot(x = variable, y = value, data = long, facets = smooth~ .,
-          colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
-  scale_color_discrete("Fractional Intensity") + 
-  ggtitle("Performance Metric Distribution for Different Pipelines") +
-  theme(legend.position = c(.5, .75),
-        legend.background = element_rect(fill="transparent"),
-        legend.key = element_rect(fill="transparent", 
-                                  color="transparent"),
-        legend.text = element_text(size=15), 
-        legend.title = element_text(size=15),
-        title = element_text(size=15),
-        strip.text = element_text(size = 15),
-        axis.text  = element_text(size=12))
-print(g)
-dev.off()
-
-
-
-
-## ----CT_Skull_Stripping_Figure2b, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2----
-pngname = file.path(figdir, "CT_Skull_Stripping_Figure2b.png")
-png(pngname)
-g2 = qplot(x = variable, y = value, data =long[ long$smooth == "Smoothed",],
-          colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
-  scale_color_discrete("Fractional Intensity") + 
-  ggtitle("Performance Metric Distribution for Smoothed Pipelines") +
-  theme(legend.position = c(.68, .65),
-        legend.background = element_rect(fill="transparent"),
-        legend.key = element_rect(fill="transparent", 
-                                  color="transparent"),
-        legend.text = element_text(size=15), 
-        legend.title = element_text(size=15),
-        title = element_text(size=15),
-        strip.text = element_text(size = 15),
-        axis.text  = element_text(size=12)) + 
-  scale_y_continuous(limits=c(.95, 1))
-print(g2)
-dev.off()
 
 
 ## ----tests---------------------------------------------------------------
@@ -212,33 +255,112 @@ all.int.tests = ddply(long, .(smooth), function(df){
     return(c(wt.p.value=wt$p.value, tt.p.value = tt$p.value,  stats))
   })
 }, .progress="text")
-# colnames(all.wt)[1:3] = c("int", "variable", "p.value")
 
-uint = unique(long$int)
-# eg = expand.grid(int1= uint, int2 = uint, stringsAsFactors = FALSE)
-eg = t(combn(uint, 2))
-class(eg) = "numeric"
-eg = data.frame(eg)
-names(eg) = c("int1", "int2")
-eg = eg[ eg$int1 != eg$int2, ]
-rownames(eg) = NULL
-smooth = long[ long$smooth == "Smoothed", ]
+smooth = all.int.tests[ all.int.tests$smooth == "Smoothed",]
+pval <- function(pval) {
+  x <- ifelse(pval < 0.001, "< 0.001", sprintf("= %03.3f", pval))
+	return(x)
+}
+smooth$wt.p.value = pval(smooth$wt.p.value)
+num = sapply(smooth, class) == "numeric"
+smooth[, num] = round(smooth[, num], 4)
+rownames(smooth) = smooth$variable
+smooth$variable = smooth$smooth = NULL
+smooth.dice = smooth["Dice Similarity Index",]
 
-smooth.wt = apply(eg, 1, function(x){
-  int1 = x["int1"]
-  int2 = x["int2"]
-  keep = smooth[ smooth$int %in% c(int1, int2), ]
-  pvals = ddply(keep, .(variable), function(r){
-    wt = mytest(value ~ int, data=r)
-    wt$p.value
-  })
-})
 
-smooth.wt = cbind(eg, t(sapply(smooth.wt, function(x) {
-  xx = x$V1
-  names(xx) = x$variable
-  return(xx)
-})))
+## ----check_p-------------------------------------------------------------
+stopifnot(all(all.smooth.tests$wt.p.value < 0.01))
 
+
+## ----figcap_CT_Skull_Stripping_Figure2-----------------------------------
+CT_Skull_Stripping_Figure2 = paste0("{\\bf Performance Metric Distribution for Different Pipelines.} ", 
+"Panel~\\protect\\subref*{unsmoothed} displays the boxplots for performance measures when running the pipeline with a different fractional intensity (FI), using smoothed data (top) or unsmoothed data (bottom).  Panel~\\protect\\subref*{smoothed} presents the smoothed data only, rescaled to show discrimination between the different FI.", " Overall, FI of $0.01$ and $0.1$ perform better than $0.35$ in all categories other than specificity.  Using smoothed data improves performance in all performance metrics, markedly when an FI of $0.35$ is used.  Panel~\\protect\\subref*{smoothed} demonstrates that using an FI of $0.01$ on smoothed data has high performance on all measures.  " )
+
+
+## ----CT_Skull_Stripping_Figure2, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2----
+
+#g = qplot(x = id, y = value, facets = smooth ~ variable , data = long, 
+#  colour=int)
+#g
+long$v2 = long$variable
+long$v2 = revalue(long$v2, c("Dice Similarity Index" = "Dice Similarity\nIndex"))
+tsize = 16
+pngname = file.path(figdir, "CT_Skull_Stripping_Figure2.png")
+png(pngname)
+g = qplot(x = v2, y = value, data = long, facets = smooth~ .,
+          colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
+  scale_color_discrete("Fractional Intensity") + 
+  ggtitle("Performance Metric Distribution for Different Pipelines") +
+  theme(legend.position = c(.5, .75),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_rect(fill="transparent", 
+                                  color="transparent"),
+        legend.text = element_text(size=tsize+2), 
+        legend.title = element_text(size=tsize),
+        title = element_text(size=tsize),
+        strip.text = element_text(size = tsize+4),
+        axis.text  = element_text(size=tsize-2))
+d = data.frame(label="A", smooth="Unsmoothed")
+g = g + geom_text(data=d, x = 4, y = 0.2, size=20,
+                  aes(label=label), colour="black")
+
+print(g)
+dev.off()
+
+
+
+
+## ----CT_Skull_Stripping_Figure2b, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2----
+pngname = file.path(figdir, "CT_Skull_Stripping_Figure2b.png")
+png(pngname)
+g2 = qplot(x = v2, y = value, data =long[ long$smooth == "Smoothed",],
+          colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
+  scale_color_discrete("Fractional Intensity") + 
+  ggtitle("Performance Metric Distribution for Smoothed Pipelines") +
+  theme(legend.position = c(.68, .65),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_rect(fill="transparent", 
+                                  color="transparent"),
+        legend.text = element_text(size=tsize), 
+        legend.title = element_text(size=tsize),
+        title = element_text(size=tsize),
+        plot.title = element_text(hjust = 0.8),
+        strip.text = element_text(size = tsize + 4),
+        axis.text  = element_text(size=tsize)) + 
+  scale_y_continuous(limits=c(.95, 1))
+d = data.frame(label="B", smooth="Unsmoothed")
+g2 = g2 + geom_text(data=d, x = 4, y = 0.953, size=20,
+                  aes(label=label), colour="black")
+print(g2)
+dev.off()
+
+
+## ----newplots------------------------------------------------------------
+long.st = all.smooth.tests
+long.st = rename(long.st, c(variable="measure"))
+long.st$wt.p.value = long.st$tt.p.value = NULL
+long.st = melt(long.st, 
+                         id.vars = c("int", "measure"))
+long.st$type = gsub("(.*)\\.(.*)", "\\1", long.st$variable)
+long.st$smooth = gsub("(.*)\\.(.*)", "\\2", long.st$variable)
+# long.st$variable = NULL
+long.st =  long.st[!long.st$type %in% c("sd"), ]
+long.st =  long.st[!long.st$int %in% c("0.35"), ]
+
+## ----noplot,eval=FALSE---------------------------------------------------
+## g = ggplot(long.st, aes(x=int, y=value)) + facet_grid(smooth ~ measure) + geom_point(aes(colour=type), position=position_dodge(width=0.3))
+## g
+## 
+## g = ggplot(long.st, aes(x=type, y=value)) + facet_grid(smooth ~ measure) + geom_point(aes(colour=int), position=position_dodge(width=0.3))
+## g
+
+
+## ----cache=TRUE----------------------------------------------------------
+img.fname = file.path(basedir, "Test_Cases", "101-307", "101-307_20061110_1638_CT_5_RM_Head")
+img = readNIfTI(img.fname, reorient=FALSE)
+img.dim = pixdim(img)[2:4]
+rm(list="img")
+img.dim = round(img.dim, 2)
 
 

@@ -58,7 +58,7 @@
 
 \usepackage[hyphens]{url}
 \usepackage{enumerate}
-\usepackage{natbib}
+% \usepackage{natbib}
 
 
 %\usepackage[
@@ -74,6 +74,21 @@
 %]{biblatex}
 %\bibliography{CT_Pipeline_l}
 %\bibliography{CT_Skull_Stripping}
+
+\usepackage{hyperref}
+
+\makeatletter
+\providecommand{\doi}[1]{%
+  \begingroup
+    \let\bibinfo\@secondoftwo
+    \urlstyle{rm}%
+    \href{http://dx.doi.org/#1}{%
+      doi:\discretionary{}{}{}%
+      \nolinkurl{#1}%
+    }%
+  \endgroup
+}
+\makeatother
 
 
 \usepackage{subfig}
@@ -121,8 +136,12 @@
 \author[jhsph]{John~Muschelli\corref{cor1}}
 \ead{jmusche1@jhu.edu}
 
-\author[jhmi]{Natalie~Ullman}
+\author[jhmi]{Natalie~L.~Ullman}
 \ead{nullman1@jhmi.edu}
+
+\author[ucla]{Paul~Vespa}
+\ead{PVespa@mednet.ucla.edu}
+
 
 \author[jhmi]{Daniel~F.~Hanley}
 \ead{dhanley@jhmi.edu}
@@ -134,26 +153,27 @@
 \cortext[cor1]{Principal Corresponding Author}
 \address[jhsph]{Department of Biostatistics, Bloomberg School of Public Health, Johns Hopkins University, Baltimore, MD, USA}
 \address[jhmi]{Department of Neurology, Division of Brain Injury Outcomes,  Johns Hopkins Medical Institutions, Baltimore, MD, USA}
+\address[ucla]{Department of Neurosurgery, David Geffen School of Medicine at UCLA, Los Angeles, CA, USA}
 
 
 \begin{abstract}
 \section*{Background}
-Computed Tomography (CT) imaging of the brain is commonly used in diagnostic settings.  Although CT scans are primarily used in clinical practice, they are increasingly used in research.  A fundamental processing step in brain imaging research is brain extraction -- the process of separating the brain tissue from all other tissues. Methods for brain extraction in head CT images has been informally proposed, but never formally validated.
+Computed Tomography (CT) imaging of the brain is commonly used in diagnostic settings.  Although CT scans are primarily used in clinical practice, they are increasingly used in research.  A fundamental processing step in brain imaging research is brain extraction -- the process of separating the brain tissue from all other tissues. Methods for brain extraction in head CT images have been informally proposed, but never formally validated.
 
 
 \section*{Aim}
 
-To systematically analyze the performance of FSL's brain extraction tool (BET) on head CT images of patients with intracranial hemorrhage by varying parameters of BET and the use of smoothing after performing CT-specific preprocessing, and quantitatively comparing its results to the manual gold standard.
+To systematically analyze the performance of FSL's brain extraction tool (BET) on head CT images of patients with intracranial hemorrhage.  This was done by comparing the manual gold standard with the results of several versions of automatic brain extraction algorithms.  The effects of the choice of BET parameters and data smoothing is studied.
 
 \section*{Methods}
 
-Nineteen images from 16 patients with intracranial hemorrhage were selected from 13 different MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) stroke trial centers. Each image was thresholded using a $0-100$ Hounsfield units (HU) range. In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
+Twenty Two images from 19 patients with intracranial hemorrhage were selected from 13 different MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) stroke trial centers. Each image was thresholded using a $0-100$ Hounsfield units (HU) range. In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
 
-For validation purposes, intracranial masks were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
+For validation purposes, intracranial masks of the brain were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
 
 \section*{Results}
 
-Smoothing images improves brain extraction results using BET for all measures measures except specificity (all $p < 0.01$, uncorrected), irrespective of the FI threshold.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$.  Thus, all reported results refer only to smoothed data using an FI of $0.01$ or $0.1$.  Using an FI of $0.01$ had a higher median sensitivity ($0.9921$) than an FI of $0.1$ ($0.9905$, $p< 0.001$), lower specificity ($0.9979$ vs. $0.998$; $p< 0.001$), with no difference in accuracy ($0.9971$ vs. $0.9971$; $p= 0.134$) or DSI ($0.9894$ vs. $0.9896$; $p= 0.066$).  These measures are all very high indicating that a range of FI values may produce visually indistinguishable brain extractions.
+Smoothing images improves brain extraction results using BET for all measures measures except specificity (all $p < 0.01$, uncorrected), irrespective of the FI threshold.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$.  Thus, all reported results refer only to smoothed data using an FI of $0.01$ or $0.1$.  Using an FI of $0.01$ had a higher median sensitivity ($0.9902$) than an FI of $0.1$ ($0.9891$, $p< 0.001$), lower specificity ($0.998$ vs. $0.998$; $p< 0.001$), with no difference in accuracy ($0.9971$ vs. $0.9971$; $p= 0.039$) or DSI ($0.9892$ vs. $0.9895$; $p= 0.019$).  These measures are all very high indicating that a range of FI values may produce visually indistinguishable brain extractions.
 
 \section*{Conclusion}
 
@@ -178,18 +198,18 @@ In magnetic resonance imaging (MRI), brain extraction has been extensively studi
 
 \section{Methods}
 \subsection{ Participants and CT data}
-We used CT images patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) stroke trials \citep{morgan_preliminary_2008}.  We analyzed 19 scans, corresponding to 16 unique patients.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}. CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
+We used CT images patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) stroke trials \citep{morgan_preliminary_2008}.  We analyzed 22 scans, corresponding to 19 unique patients.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}. CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
 
 
 \subsection{Imaging Data}
 The study protocol was executed with minor, but important, differences across the 13 sites.  Scans were acquired using Siemens ($N=9$), GE ($N=6$), and Philips ($N=4$) scanners. Gantry tilt was observed in 13 scans.  
-Slice thickness of the image varied within the scan for 2 scans, referred to as variable slice thickness. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain and 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.
+Slice thickness of the image varied within the scan for 2 scans. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain and 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.
 
 %Different reconstructions of CT images are not available via the data-acquiring center, and 
 
 \subsection{Manual and Automated Brain Extraction}
 Brain tissue was manually segmented as a binary mask from DICOM (Digital Imaging and Communications in Medicine) images using the OsiriX imaging software (OsiriX v.4.1, Pixmeo; Geneva, Switzerland) by one expert reader. 
-CT brain images and the binary mask obtained using manual segmentation were exported from OsiriX to DICOM format.  
+CT brain images and the binary brain tissue mask obtained using manual segmentation were exported from OsiriX to DICOM format.  
 
 The image processing pipeline can be seen in Figure~\ref{fig:framework}.
 Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
@@ -247,7 +267,7 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \label{fig:framework}
 \end{figure}
 
-Each image was thresholded using the brain tissue range ($0$-$100$ HU).  In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
+Each image was thresholded using the brain tissue range ($0$-$100$ HU).  In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  This FI parameter varies between $0$ and $1$ and determines the location of the edge of the segmented brain image; smaller values correspond to larger brain masks. After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
 
 %To further illustrate how smoothing affects brain extraction, we present one example case where brain extraction performance with BET was acceptable only after smoothing.  
 
@@ -272,7 +292,7 @@ We calculated the paired difference of each measure using different pipelines (e
 Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The pipelines using smoothing (top) perform better than the unsmoothed pipelines (bottom) on all measures except specificity (all $p < 0.01$, uncorrected).  We also note that BET performs poorly on some scans without smoothing.  
 
 Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction for the pipelines using smoothed images.   Because the performance for all metrics was high when using smoothed images, it was necessary to change the y-axis from $[0,1]$ to $[0.95,1]$. 
-Using an FI of $0.01$ or $0.1$ performed better than $0.35$; thus, we will focus and compare results for these values of FI only for the case when BET was applied to smoothed images.  Using an FI of $0.01$ had a higher median sensitivity ($0.9921$) than an FI of $0.1$ ($0.9905$, $p< 0.001$), lower specificity ($0.9979$ vs. $0.998$; $p< 0.001$), and no difference in accuracy ($0.9971$ vs. $0.9971$; $p= 0.134$) or DSI ($0.9894$ vs. $0.9896$; $p= 0.066$).  Overall, regardless of p-values, these measures are all very high, indicating that multiple choices of parameters work well for brain extraction after CT image processing.
+Using an FI of $0.01$ or $0.1$ performed better than $0.35$; thus, we will focus and compare results for these values of FI only for the case when BET was applied to smoothed images.  Using an FI of $0.01$ had a higher median sensitivity ($0.9902$) than an FI of $0.1$ ($0.9891$, $p< 0.001$), lower specificity ($0.998$ vs. $0.998$; $p< 0.001$), and no difference in accuracy ($0.9971$ vs. $0.9971$; $p= 0.039$) or DSI ($0.9892$ vs. $0.9895$; $p= 0.019$).  Overall, regardless of p-values, these measures are all very high, indicating that multiple choices of parameters work well for brain extraction after CT image processing.
 
 % Overall, using an FI of $0.35$ performs worse overall than $0.01$ or $0.1$ for all measures other than specificity.  
 % 
@@ -347,7 +367,7 @@ Although Figure~\ref{fig:metrics} indicates that using FI of $0.01$ or $0.1$ pro
 \section{Conclusions}
 Quantitative procedures of based on data contained in head CT images require brain-only images for analysis. Indeed, brain volume estimation, intensity normalization, segmentation, and registration are a few examples of image processing steps that fundamentally rely on the existence of a reliable brain mask.  We have introduced the first validated automated brain extraction pipeline for head CT images. Validation was done using gold-standard manual segmentations of brain tissue.  A novel finding is that smoothing the data using a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ or $0.1$ provides good brain extraction for the sample studied.  These choices make a large difference in the performance of the algorithms and have not been previously reported in the literature.
 
-Although the sample size was relatively small, the CT images used are from different people, different centers, and different scanners.  More validation is necessary, which can only be done using more hand-segmented brain CT images. However, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units).
+Although the sample size was relatively small, the CT images used are from different people, different centers, and different scanners.  More validation is necessary, which can only be done using more hand-segmented brain CT images. However, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units).  We are using a population of patients with intracranial hemorrhage and we note the accuracy of BET may be dependent on factors such as hematoma size, which may change the distribution of Hounsfield units or compress of brain structures.  We observed good performance of BET in these patients using the parameters described and believe that this may indicate a more robust result than if brains from individuals with no pathology were used.
 
 The research presented here is fully reproducible and we provide ready-to-use software for CT brain extraction. The \texttt{R} function designed to perform brain extraction is located at
 \url{http://bit.ly/CTBET_RCODE} and example bash script can be downloaded here \url{http://bit.ly/CTBET_BASH}.  As our software is publicly available and is based on open-source, free programs (FSL and R), our method is readily available to all users.

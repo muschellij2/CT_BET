@@ -10,7 +10,7 @@ options(fsl.path='/usr/local/fsl')
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
 
-ROIformat = FALSE
+ROIformat = TRUE
 study = "Original_Images"
 if (ROIformat) {
   study = "ROI_images"
@@ -26,7 +26,8 @@ ids = basename(ids)
 ids = grep("\\d\\d\\d-(\\d|)\\d\\d\\d", ids, value=TRUE)
 length(ids)
 
-iid = 15
+iid = 13
+# 13
 
 for (iid in seq_along(ids)){
   
@@ -67,10 +68,10 @@ for (iid in seq_along(ids)){
                             isSorted = isSorted,
                             removeDups=removeDups,
                             dcmsortopt=dcmsortopt, 
-                            ROIformat = FALSE,
-                            dcm2niicmd=dcm2niicmd,
-                            gt_correct=FALSE,
-                            add.img.dir=FALSE))
+                            ROIformat = ROIformat,
+                            dcm2niicmd=dcm2niicmd))
+#     gt_correct=TRUE,
+#     add.img.dir=FALSE
   }
 
   mid.folder = function(x, folname = ""){

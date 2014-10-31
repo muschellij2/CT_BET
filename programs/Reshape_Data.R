@@ -8,6 +8,7 @@ library(stringr)
 library(reshape2)
 
 basedir <- file.path("~/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/")
+basedir = path.expand(basedir)
 setwd(basedir)
 dirs <- list.dirs(basedir, full.names=TRUE, recursive=FALSE)
 dirs <- dirs[!grepl("(Images|programs)", dirs)]

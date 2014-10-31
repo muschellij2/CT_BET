@@ -9,7 +9,7 @@
 
 \usepackage[hyphens]{url}
 \usepackage{enumerate}
-\usepackage{natbib}
+% \usepackage{natbib}
 
 
 %\usepackage[
@@ -25,6 +25,21 @@
 %]{biblatex}
 %\bibliography{CT_Pipeline_l}
 %\bibliography{CT_Skull_Stripping}
+
+\usepackage{hyperref}
+
+\makeatletter
+\providecommand{\doi}[1]{%
+  \begingroup
+    \let\bibinfo\@secondoftwo
+    \urlstyle{rm}%
+    \href{http://dx.doi.org/#1}{%
+      doi:\discretionary{}{}{}%
+      \nolinkurl{#1}%
+    }%
+  \endgroup
+}
+\makeatother
 
 
 \usepackage{subfig}
@@ -65,16 +80,26 @@ basedir = file.path(rootdir, "Final_Brain_Seg")
 resdir = file.path(basedir, "results")
 paperdir = file.path(basedir, "Skull_Strip_Paper")
 figdir = file.path(paperdir, "figure")
+progdir = file.path(basedir, "programs")
+
+new.ids = readLines(file.path(progdir, "newid_list.txt"))
 
 homedir <- file.path(basedir, study)
 
 rdas = list.files(path=homedir, pattern=".*_CT_.*Header_Info.Rda", 
                   full.names = TRUE, recursive = TRUE)
-stopifnot(!any(grepl("antry", rdas)))
+gant = rdas[grepl("antry", rdas)]
+gant = gsub("_ungantry", "", gant)
+rdas = rdas[ ! (rdas %in% gant)]
+# stopifnot(!any(grepl("antry", rdas)))
 rdas = rdas[grepl("Sorted", rdas)]
 rda = data.frame(rda=rdas, stringsAsFactors = FALSE)
 rda$id = basename(rda$rda)
 rda$id = gsub("(.*)_Header_Info.*", "\\1", rda$id)
+rda$id = gsub("_ungantry", "", rda$id)
+
+runold = TRUE
+if (runold) rda = rda[ !(rda$id %in% new.ids), ]
 
 
 get.val = function(rda, val){
@@ -328,6 +353,10 @@ smooth.dice = smooth["Dice Similarity Index",]
 \author[jhmi]{Natalie~L.~Ullman}
 \ead{nullman1@jhmi.edu}
 
+\author[ucla]{Paul~Vespa}
+\ead{PVespa@mednet.ucla.edu}
+
+
 \author[jhmi]{Daniel~F.~Hanley}
 \ead{dhanley@jhmi.edu}
 
@@ -338,6 +367,7 @@ smooth.dice = smooth["Dice Similarity Index",]
 \cortext[cor1]{Principal Corresponding Author}
 \address[jhsph]{Department of Biostatistics, Bloomberg School of Public Health, Johns Hopkins University, Baltimore, MD, USA}
 \address[jhmi]{Department of Neurology, Division of Brain Injury Outcomes,  Johns Hopkins Medical Institutions, Baltimore, MD, USA}
+\address[ucla]{Department of Neurosurgery, David Geffen School of Medicine at UCLA, Los Angeles, CA, USA}
 
 
 \begin{abstract}
@@ -353,7 +383,7 @@ To systematically analyze the performance of FSL's brain extraction tool (BET) o
 
 \Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) stroke trial centers. Each image was thresholded using a $0-100$ Hounsfield units (HU) range. In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
 
-For validation purposes, intracranial masks were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
+For validation purposes, intracranial masks of the brain were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
 
 \section*{Results}
 
@@ -393,7 +423,7 @@ Slice thickness of the image varied within the scan for \Sexpr{n.var.slice} scan
 
 \subsection{Manual and Automated Brain Extraction}
 Brain tissue was manually segmented as a binary mask from DICOM (Digital Imaging and Communications in Medicine) images using the OsiriX imaging software (OsiriX v.4.1, Pixmeo; Geneva, Switzerland) by one expert reader. 
-CT brain images and the binary mask obtained using manual segmentation were exported from OsiriX to DICOM format.  
+CT brain images and the binary brain tissue mask obtained using manual segmentation were exported from OsiriX to DICOM format.  
 
 The image processing pipeline can be seen in Figure~\ref{fig:framework}.
 Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
@@ -451,7 +481,7 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \label{fig:framework}
 \end{figure}
 
-Each image was thresholded using the brain tissue range ($0$-$100$ HU).  In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
+Each image was thresholded using the brain tissue range ($0$-$100$ HU).  In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  This FI parameter varies between $0$ and $1$ and determines the location of the edge of the segmented brain image; smaller values correspond to larger brain masks. After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
 
 %To further illustrate how smoothing affects brain extraction, we present one example case where brain extraction performance with BET was acceptable only after smoothing.  
 
@@ -633,7 +663,7 @@ Although Figure~\ref{fig:metrics} indicates that using FI of $0.01$ or $0.1$ pro
 \section{Conclusions}
 Quantitative procedures of based on data contained in head CT images require brain-only images for analysis. Indeed, brain volume estimation, intensity normalization, segmentation, and registration are a few examples of image processing steps that fundamentally rely on the existence of a reliable brain mask.  We have introduced the first validated automated brain extraction pipeline for head CT images. Validation was done using gold-standard manual segmentations of brain tissue.  A novel finding is that smoothing the data using a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ or $0.1$ provides good brain extraction for the sample studied.  These choices make a large difference in the performance of the algorithms and have not been previously reported in the literature.
 
-Although the sample size was relatively small, the CT images used are from different people, different centers, and different scanners.  More validation is necessary, which can only be done using more hand-segmented brain CT images. However, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units).
+Although the sample size was relatively small, the CT images used are from different people, different centers, and different scanners.  More validation is necessary, which can only be done using more hand-segmented brain CT images. However, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units).  We are using a population of patients with intracranial hemorrhage and we note the accuracy of BET may be dependent on factors such as hematoma size, which may change the distribution of Hounsfield units or compress of brain structures.  We observed good performance of BET in these patients using the parameters described and believe that this may indicate a more robust result than if brains from individuals with no pathology were used.
 
 The research presented here is fully reproducible and we provide ready-to-use software for CT brain extraction. The \texttt{R} function designed to perform brain extraction is located at
 \url{http://bit.ly/CTBET_RCODE} and example bash script can be downloaded here \url{http://bit.ly/CTBET_BASH}.  As our software is publicly available and is based on open-source, free programs (FSL and R), our method is readily available to all users.

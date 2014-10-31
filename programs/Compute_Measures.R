@@ -83,7 +83,7 @@ rimg.df$id = sapply(ss, function(x) {
 
 df = merge(rimg.df, img.df, all.x=TRUE)
 
-df = merge(df, ssdf, all=TRUE)
+df = merge(df, ssdf, all.x=TRUE)
 
 twoXtwo2 = function(x, y, dnames=c("x", "y")){
     ### could put a length(x) == length(y) check 
