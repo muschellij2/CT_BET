@@ -655,7 +655,7 @@ Although Figure~\ref{fig:metrics} indicates that using FI of $0.01$ or $0.1$ pro
   \label{ss:35_nosmooth}
 	\includegraphics[width=.315\textwidth]{figure/{101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask}.png} 
 }
-\caption{{\bf Example Case where Smoothing before BET is Required} For one subject, the CT image is displayed with the brain extracted mask in red after running all pipelines.  Panels~\protect\subref*{ss:01_smooth}, \protect\subref*{ss:1_smooth}, and \protect\subref*{ss:35_smooth} represent applying BET using FI of $0.01$, $0.01$, and $0.35$, respectively, to smoothed data. Panels~\protect\subref*{ss:01_nosmooth}, \protect\subref*{ss:1_nosmooth}, and \protect\subref*{ss:35_nosmooth} correspond to applying BET using FI $0.01$, $0.01$, and $0.35$ on unsmoothed data.  Smoothing images improves brain extraction with BET.
+\caption{{\bf Example Case where Smoothing before BET is Required} For one subject, the CT image is displayed with the brain extracted mask in red after running all pipelines.  Panels~\protect\subref*{ss:01_smooth}, \protect\subref*{ss:1_smooth}, and \protect\subref*{ss:35_smooth} represent applying BET using FI of $0.01$, $0.1$, and $0.35$, respectively, to smoothed data. Panels~\protect\subref*{ss:01_nosmooth}, \protect\subref*{ss:1_nosmooth}, and \protect\subref*{ss:35_nosmooth} correspond to applying BET using FI $0.01$, $0.1$, and $0.35$ on unsmoothed data.  Smoothing images improves brain extraction with BET.
 }
 \label{fig:ss_example}
 \end{figure}

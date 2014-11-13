@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{positioning}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\begin{document}
+\pagestyle{empty}
+% Define block styles
+
+\tikzstyle{bblock} = [rectangle, draw, text width=8em, text centered, minimum height=2em, rounded corners]
+\tikzstyle{line} = [draw, text centered , -latex']
+\tikzstyle{line node} = [draw, fill=white, font=\tiny ]
+\tikzstyle{block} = [rectangle, draw, text width=5em, text centered, minimum height=4em, rounded corners]    
+
+\begin{tikzpicture}[node distance = 2cm, every node/.style={rectangle,fill=white}, scale=1.5, transform shape]
+% Place nodes
+\node [bblock] (raw) {DICOM images};
+\node [bblock, below = 2.5cm of raw] (dcmnii) {NIfTI image};
+\node [bblock, below of=dcmnii] (thresh) {Threshold to 0-100 HU };
+\node [bblock, above right=1cm and 1.25cm of dcmnii] (gantry) {Gantry tilt correction};
+\node [bblock, below of=thresh, left of=thresh] (nosmooth) {No Smooth};
+\node [bblock, below of=thresh, right of=thresh] (smooth) {Smooth ($1$mm)};
+
+\node [bblock, below of=nosmooth, right of=nosmooth] (BET) {BET};
+
+\node [block, below of=BET, node distance = 3cm] (SS_1) {FI=0.1};
+\node [block, left = 1.75em of SS_1] (SS_01) {FI=0.01};
+\node [block, right = 1.75em of SS_1] (SS_35) {FI=0.35};
+
+\node [block, below of=SS_1] (Mask) {Threshold image $> 0$ (Mask)};
+
+\node [block, below of=Mask, node distance = 2cm] (Fillin) {Fill mask holes};
+
+\node [bblock, below of=Fillin, node distance = 2cm] (Measures) {Performance Measures};
+
+% Draw edges
+\path [line] (raw) -- node {dcm2nii} (dcmnii);
+\path [line] (raw) -- (gantry);
+\path [line] (gantry) -- node {dcm2nii} (dcmnii);
+\path [line] (dcmnii) -- (thresh);
+\path [line] (thresh) -- (nosmooth);
+\path [line] (thresh) -- (smooth);
+\path [line] (smooth) -- (BET);
+\path [line] (nosmooth) -- node[above right= -0.15cm and -0.6cm of BET] {Threshold to 0-100 HU} (BET);
+\path [line] (BET) -- (SS_01);
+\path [line] (BET) -- (SS_35);
+\path [line] (BET) -- node {Different fractional intensity (FI) Value} (SS_1);
+\path [line] (SS_1) -- (Mask);
+\path [line] (SS_01) -- (Mask);
+\path [line] (SS_35) -- (Mask);
+\path [line] (Mask) -- (Fillin);
+\path [line] (Fillin) -- (Measures);
+\end{tikzpicture}
+\end{document}

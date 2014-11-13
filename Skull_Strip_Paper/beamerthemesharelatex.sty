@@ -1,0 +1,211 @@
+%==============================================================================
+% Beamer style for posters
+% // based on 'cpbgposter' beamer theme //
+%==============================================================================
+
+
+\ProvidesPackage{beamerthemesharelatex}
+
+
+\RequirePackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,calc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{textcomp}
+\RequirePackage{amsmath,amssymb}
+\usefonttheme{professionalfonts}
+
+\usepackage{ragged2e}
+
+% normal math font
+%\usepackage{mathptmx}
+% funny math font
+\usepackage{euler}
+
+%%% other text fonts
+%\usepackage{palatino}
+%\usepackage{bookman}
+%\usepackage{utopia}
+%\usepackage{tgpagella}
+%\usepackage{tgheros}
+%
+%\renewcommand\rmdefault{qtm}
+%\renewcommand\sfdefault{qhv}
+%\renewcommand\ttdefault{qcr}
+\renewcommand\ttdefault{lmvtt}
+
+% multicols
+\usepackage{multicol}
+\setlength{\columnsep}{80pt}
+
+% captions
+\usepackage[justification=justified,listformat=simple,format=plain,labelformat=simple]{caption}
+
+\usepackage{url}
+
+%==============================================================================
+% define basic colors 
+%==============================================================================
+%==============================================================================
+
+  \definecolor{color0}  {RGB}{0,0,0} %%% text color
+  \definecolor{color1}  {RGB}{20,66,129} %%% title and subsection color
+  \definecolor{color2}  {RGB}{28,130,185} %%% section color
+  \definecolor{color3}  {RGB}{255,255,255} %%% background color
+
+%==============================================================================
+%==============================================================================
+
+%set the basic colors palette
+%   \setbeamercolor{palette primary}   {fg=color0,bg=color3}
+%   \setbeamercolor{palette secondary} {fg=color0,bg=color3}
+%   \setbeamercolor{palette tertiary}  {fg=color0,bg=color3}
+%   \setbeamercolor{palette quaternary}{fg=color0,bg=color3}
+  \setbeamercolor{structure}{fg=color1}
+%   \setbeamercolor{titlelike}         {bg=color1,fg=color3}
+%   \setbeamercolor{frametitle}        {bg=color2!10,fg=color2}
+%
+  \setbeamercolor{colorbar}{fg=color0,bg=color1}
+  \setbeamercolor{normal text}{fg=color0}
+
+% background color
+  \beamertemplatesolidbackgroundcolor{color3}
+  %\beamertemplateshadingbackground{color3}{color3!70!color1}
+
+%set the fonts
+  \setbeamerfont{section in head/foot}{series=\bfseries}
+  \setbeamerfont{block title}{series=\bfseries}
+  \setbeamerfont{block alerted title}{series=\bfseries}
+  \setbeamerfont{frametitle}{series=\bfseries}
+  \setbeamerfont{frametitle}{size=\Large}
+  \setbeamerfont{caption}{size=\normalsize}
+  \setbeamerfont{caption name}{size=\normalsize}
+
+%set some beamer theme options
+  \setbeamertemplate{title page}[default][colsep=-4bp,rounded=true]
+  \setbeamertemplate{sections/subsections in toc}[square]
+  \setbeamertemplate{items}[circle]
+  \setbeamertemplate{blocks}[width=0.0]
+  \beamertemplatenavigationsymbolsempty
+%set bibliography style
+ \setbeamertemplate{bibliography item}[text]
+ \setbeamercolor{bibliography item}{fg=color0,bg=color3}
+ \setbeamercolor{bibliography entry author}{fg=color0,bg=color3}
+ \setbeamerfont{bibliography item}{size=\scriptsize}
+ \setbeamerfont{bibliography entry author}{size=\scriptsize}
+
+
+%
+%==============================================================================
+% build the poster title
+%==============================================================================
+\setbeamertemplate{headline}{
+ \leavevmode
+  \begin{columns}
+   \begin{column}{0.25\linewidth}
+    \begin{center}
+     \includegraphics[width=1\linewidth]{logo}
+    \end{center}
+   \end{column}
+   \begin{column}{.5\linewidth}
+    \vskip2cm
+    \centering
+    %\usebeamercolor{title in headline}
+{\color{color2} \textbf{\huge{\inserttitle}}\\[1ex]}
+    \vskip 1.5cm
+    %\usebeamercolor{author in headline}
+{\color{fg} \Large{\insertauthor}\\[1ex]}
+    %\usebeamercolor{institute in headline}
+{\color{fg} \large{\insertinstitute}\\[1ex]}
+        \vskip2cm
+      \end{column}
+       \begin{column}{.25\linewidth}
+         \begin{center}
+           \includegraphics[width=.5\linewidth]{logo2}\hspace{5cm}\\
+           \includegraphics[width=.35\linewidth]{logo3} 
+         \end{center}
+       \end{column}
+%        \vspace{1cm}
+    \end{columns}
+
+%%% additional bar under titles
+%\begin{beamercolorbox}[colsep=0.5cm]{colorbar}
+%\end{beamercolorbox}
+}
+
+
+%==============================================================================
+% build the poster foot
+%==============================================================================
+%\setbeamertemplate{footline}{
+% \leavevmode
+%    \vskip2cm
+%  \begin{center}
+%\begin{minipage}[c][3cm][c]{0.95\textwidth}
+%  \begin{center}
+%%
+%     \begin{flushleft}
+%     \vskip-1cm
+%     \begin{tikzpicture}[
+%remember picture,overlay,
+%%background rectangle/.style={fill=color3},show background rectangle
+%]
+%       \shade [inner color=color2,outer color=color3] (0,0) rectangle (\textwidth,0.3cm);
+%     \end{tikzpicture}
+%     \end{flushleft}
+%%
+%  \vskip1cm
+%    \centering
+%    %\usebeamercolor{title in headline}
+%{\color{fg} \textbf{\large{\insertshorttitle}}}
+%%
+%  \end{center}
+%\end{minipage}
+%  \end{center}
+%    \vskip1cm
+%}
+
+%
+%==============================================================================
+% Section and subsection re-definitions
+
+\renewcommand{\section}[1]{
+\par\vskip\medskipamount%
+%
+     \begin{flushleft}
+     \begin{tikzpicture}[remember picture,overlay]
+       \shade [inner color=color2,outer color=color3] (0,0) rectangle (\columnwidth,0.3cm);
+     \end{tikzpicture}
+     \end{flushleft}
+%
+     \begin{center}
+     %\vskip1cm
+     {\textcolor{color2}{\textbf{\Large #1}}}
+     {\parskip0pt\par}
+     \end{center}
+%
+     \begin{flushleft}
+     \vskip-1cm
+     \begin{tikzpicture}[remember picture,overlay]
+       \shade [inner color=color2,outer color=color3] (0,0) rectangle (\columnwidth,0.3cm);
+     \end{tikzpicture}
+     \end{flushleft}
+%
+  {\parskip0pt\par}
+  \justifying
+}
+
+%%%
+\renewcommand{\subsection}[1]{
+\par\vskip\medskipamount%
+     \begin{center}
+     \vskip0.8cm
+     {\textcolor{color1}{\textbf{\textsl{\large #1}}}}
+     {\parskip0pt\par}
+     \end{center}
+%
+  \justifying
+}
+
+%==============================================================================
+

@@ -1,0 +1,178 @@
+% $ biblatex auxiliary file $
+% $ biblatex version 2.4 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\entry{dice_measures_1945}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Dice}{D.}%
+     {Lee~R.}{L.~R.}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{DLR1}
+  \strng{fullhash}{DLR1}
+  \field{sortinit}{D}
+  \field{number}{3}
+  \field{pages}{297\bibrangedash 302}
+  \field{title}{Measures of the amount of ecologic association between species}
+  \verb{url}
+  \verb http://www.jstor.org/stable/1932409
+  \endverb
+  \field{volume}{26}
+  \field{journaltitle}{Ecology}
+  \field{year}{1945}
+  \field{urlday}{09}
+  \field{urlmonth}{09}
+  \field{urlyear}{2014}
+  \warn{\item Can't use 'journaltitle' + 'journal' \item Can't use 'date' +
+  'year'}
+\endentry
+
+\entry{jenkinson_fsl_2012}{article}{}
+  \name{author}{5}{}{%
+    {{}%
+     {Jenkinson}{J.}%
+     {Mark}{M.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Beckmann}{B.}%
+     {Christian~F.}{C.~F.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Behrens}{B.}%
+     {Timothy E.~J.}{T.~E.~J.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Woolrich}{W.}%
+     {Mark~W.}{M.~W.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Smith}{S.}%
+     {Stephen~M.}{S.~M.}%
+     {}{}%
+     {}{}}%
+  }
+  \keyw{{FSL}, Software}
+  \strng{namehash}{JM+1}
+  \strng{fullhash}{JMBCFBTEJWMWSSM1}
+  \field{sortinit}{J}
+  \field{abstract}{%
+  {FSL} (the {FMRIB} Software Library) is a comprehensive library of analysis
+  tools for functional, structural and diffusion {MRI} brain imaging data,
+  written mainly by members of the Analysis Group, {FMRIB}, Oxford. For this
+  {NeuroImage} special issue on “20 years of {fMRI}” we have been asked to
+  write about the history, developments and current status of {FSL}. We also
+  include some descriptions of parts of {FSL} that are not well covered in the
+  existing literature. We hope that some of this content might be of interest
+  to users of {FSL}, and also maybe to new research groups considering
+  creating, releasing and supporting new software packages for brain image
+  analysis.%
+  }
+  \verb{doi}
+  \verb 10.1016/j.neuroimage.2011.09.015
+  \endverb
+  \field{issn}{1053-8119}
+  \field{number}{2}
+  \field{pages}{782\bibrangedash 790}
+  \field{shortjournal}{{NeuroImage}}
+  \field{title}{{FSL}}
+  \verb{url}
+  \verb http://www.sciencedirect.com/science/article/pii/S1053811911010603
+  \endverb
+  \field{volume}{62}
+  \verb{file}
+  \verb Jenkinson et al_2012_FSL.pdf:/Users/johnmuschelli/Library/Application S
+  \verb upport/Zotero/Profiles/9yinbn16.default/zotero/storage/ET728B86/Jenkins
+  \verb on et al_2012_FSL.pdf:application/pdf;ScienceDirect Snapshot:/Users/joh
+  \verb nmuschelli/Library/Application Support/Zotero/Profiles/9yinbn16.default
+  \verb /zotero/storage/BGRM38N8/S1053811911010603.html:text/html;ScienceDirect
+  \verb  Snapshot:/Users/johnmuschelli/Library/Application Support/Zotero/Profi
+  \verb les/9yinbn16.default/zotero/storage/V3CCZKHS/S1053811911010603.html:tex
+  \verb t/html
+  \endverb
+  \field{journaltitle}{{NeuroImage}}
+  \field{day}{15}
+  \field{month}{08}
+  \field{year}{2012}
+  \field{urlyear}{2014}
+  \warn{\item Can't use 'journaltitle' + 'journal' \item Can't use 'date' +
+  'year'}
+\endentry
+
+\entry{smith_fast_2002}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Smith}{S.}%
+     {Stephen~M.}{S.~M.}%
+     {}{}%
+     {}{}}%
+  }
+  \keyw{brain segmentation, cortical surface modeling}
+  \strng{namehash}{SSM1}
+  \strng{fullhash}{SSM1}
+  \field{sortinit}{S}
+  \field{abstract}{%
+  An automated method for segmenting magnetic resonance head images into brain
+  and non-brain has been developed. It is very robust and accurate and has been
+  tested on thousands of data sets from a wide variety of scanners and taken
+  with a wide variety of {MR} sequences. The method, Brain Extraction Tool
+  ({BET}), uses a deformable model that evolves to fit the brain's surface by
+  the application of a set of locally adaptive model forces. The method is very
+  fast and requires no preregistration or other pre-processing before being
+  applied. We describe the new method and give examples of results and the
+  results of extensive quantitative testing against “gold-standard” hand
+  segmentations, and two other popular automated methods. Hum. Brain Mapping
+  17:143–155, 2002. © 2002 Wiley-Liss, Inc.%
+  }
+  \verb{doi}
+  \verb 10.1002/hbm.10062
+  \endverb
+  \field{issn}{1097-0193}
+  \field{number}{3}
+  \field{pages}{143–155}
+  \field{title}{Fast robust automated brain extraction}
+  \verb{url}
+  \verb http://onlinelibrary.wiley.com/doi/10.1002/hbm.10062/abstract
+  \endverb
+  \field{volume}{17}
+  \field{langid}{english}
+  \verb{file}
+  \verb Smith_2002_Fast robust automated brain extraction.pdf:/Users/johnmusche
+  \verb lli/Library/Application Support/Zotero/Profiles/9yinbn16.default/zotero
+  \verb /storage/ZSXDCDIG/Smith_2002_Fast robust automated brain extraction.pdf
+  \verb :application/pdf;Snapshot:/Users/johnmuschelli/Library/Application Supp
+  \verb ort/Zotero/Profiles/9yinbn16.default/zotero/storage/6932EW7R/full.html:
+  \verb text/html;Snapshot:/Users/johnmuschelli/Library/Application Support/Zot
+  \verb ero/Profiles/9yinbn16.default/zotero/storage/QJG9M232/abstract.html:tex
+  \verb t/html
+  \endverb
+  \field{journaltitle}{Human Brain Mapping}
+  \field{year}{2002}
+  \field{urlyear}{2014}
+  \warn{\item Can't use 'journaltitle' + 'journal' \item Can't use 'date' +
+  'year'}
+\endentry
+
+\lossort
+\endlossort
+
+\endinput

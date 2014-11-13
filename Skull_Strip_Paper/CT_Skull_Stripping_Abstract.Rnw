@@ -70,6 +70,11 @@ homedir <- file.path(basedir, study)
 
 rdas = list.files(path=homedir, pattern=".*_CT_.*Header_Info.Rda", 
                   full.names = TRUE, recursive = TRUE)
+ostubs = gsub("_Header_Info.Rda", "", rdas, fixed=TRUE)
+stubs = gsub("_ungantry", "", ostubs)
+stopifnot(all(stubs %in% ostubs))
+rdas = rdas[!grepl("antry", rdas)]
+                  
 stopifnot(!any(grepl("antry", rdas)))
 rdas = rdas[grepl("Sorted", rdas)]
 rda = data.frame(rda=rdas, stringsAsFactors = FALSE)

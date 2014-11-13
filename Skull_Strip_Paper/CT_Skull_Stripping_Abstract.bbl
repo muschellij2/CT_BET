@@ -1,0 +1,25 @@
+\begin{thebibliography}{1}
+
+\bibitem{jenkinson_fsl_2012}
+M.~Jenkinson, C.~F. Beckmann, T.~E.~J. Behrens, M.~W. Woolrich, and S.~M.
+  Smith.
+\newblock {FSL}.
+\newblock {\em {NeuroImage}}, 62(2):782--790, 2012.
+
+\bibitem{rorden_age-specific_2012}
+C.~Rorden, L.~Bonilha, J.~Fridriksson, B.~Bender, and H.-O. Karnath.
+\newblock Age-specific {CT} and {MRI} templates for spatial normalization.
+\newblock {\em {NeuroImage}}, 61(4):957--965, 2012.
+
+\bibitem{smith_fast_2002}
+S.~M. Smith.
+\newblock Fast robust automated brain extraction.
+\newblock {\em Human Brain Mapping}, 17(3):143–155, 2002.
+
+\bibitem{able}
+J.~Solomon, V.~Raymont, A.~Braun, J.~A. Butman, and J.~Grafman.
+\newblock User-friendly software for the analysis of brain lesions (able).
+\newblock {\em Computer methods and programs in biomedicine}, 86(3):245--254,
+  2007.
+
+\end{thebibliography}
