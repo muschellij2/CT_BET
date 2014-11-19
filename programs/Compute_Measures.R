@@ -85,6 +85,11 @@ df = merge(rimg.df, img.df, all.x=TRUE)
 
 df = merge(df, ssdf, all.x=TRUE)
 
+df$hdr = file.path(dirname(df$img), "Sorted", 
+                   paste0(nii.stub(df$img, bn=TRUE), "_Header_Info.Rda"))
+
+
+
 twoXtwo2 = function(x, y, dnames=c("x", "y")){
     ### could put a length(x) == length(y) check 
     nx = length(x)
@@ -185,20 +190,30 @@ for (iimg in seq_along(splitdf)){
 	rimg = dd$rimg[1]
 	roi = readNIfTI(rimg, reorient=FALSE)
 	roi = roi > 0
-
+  
+  hdr = dd$hdr[1]
+  load(hdr)
+  
+  vol.roi = get_roi_vol(img = roi, dcmtables = dcmtables)
+  varslice = vol.roi$varslice
+  vol.roi = vol.roi$truevol
+  
 	results = laply(dd$ssimg, function(x){
 		ss = readNIfTI(x, reorient=FALSE)
 		ss = ss > 0		
+		truevol = get_roi_vol(img = ss, dcmtables = dcmtables)$truevol
 		dman = c(roi)
 		dauto = c(ss)
 		dim.dman = dim(roi)
 		dim.dauto = dim(ss)
 
 		res = sim(dman, dauto, dim.dman, dim.dauto)	
+    res$estvol = truevol
 		return(res)
 	}, .progress = "text")
 
 	dd = cbind(dd, results)
+  dd$truevol = vol.roi
 
 	splitdf[[iimg]] = dd
 	print(iimg)
