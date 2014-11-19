@@ -3,4 +3,6 @@
 *.rois_series
 *_Header_Info.Rda
 results/*.png
-results/SS_Overlays/*.png
+results/SS_Overlays/0.01/*.png
+results/SS_Overlays/0.35/*.png
+results/SS_Overlays/0.1/*.png
