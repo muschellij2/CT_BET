@@ -9,7 +9,7 @@ The authors should address the following points:
 - Gantry tilt was not specifically necessary and this is noted.  We perform this for our general pipeline, which involves rigid body registration of the skull-stripped images, which requires gantry tilt correction.   No interpolation is done in our process, the image is only shifted with zero padding to offset the tilt (all scans were acquired axially).
 FOV problem
 
-2)      It is indicated that the slice thickness can vary across the volume. However, in section 2.3, it is indicated that the thickness is taken from the first slice and then assumed to be homogenous throughout the image (I presume image volume). What was the slice thickness used for? What effect did the assumption of homogenous slice thickness have in studies which had varying slice thickness throughout the study? Was a homogenous slice thickness assumed for the tilt correction which could result in distortion?
+2)      It is indicated that the slice thickness can vary across the volume. However, in section 2.3, it is indicated that the thickness is taken from the first slice and then assumed to be homogenous throughout the image (I presume image volume). What was the slice thickness used for? What effect did the assumption of homogenous slice thickness have gin studies which had varying slice thickness throughout the study? Was a homogenous slice thickness assumed for the tilt correction which could result in distortion?
 - When using the image to calculate the volume  
 
 
@@ -43,9 +43,10 @@ used by Rorden et al. (2012), which is 0.35, works just as well on the smoothed 
  
 By the way, the authors state that the 0.35 threshold was "recommended in Rorden et al., 2012"; this is not entirely correct, because the Rorden et al. paper does not explicitly advocate this value, it is simply the only threshold value they report using.
  
-- We agree and the wording has been changed in the text. 
+- We agree and the wording has been changed in the text.  Says "used"
 
 The sample used in the study is, in my opinion, too small to provide sufficient power. There are 19 scans, but only 16 patients; were some patients scanned twice, or thrice?
+
 - These duplicate scans were removed and additional, independent patients, were added.
  
 Were these patients analyzed as independent data points, which is a bad methodological choice?

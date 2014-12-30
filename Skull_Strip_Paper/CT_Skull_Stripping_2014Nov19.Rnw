@@ -66,6 +66,7 @@ library(matrixStats)
 library(gridExtra)
 library(qdap)
 library(ICC)
+library(xtable)
 options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
@@ -141,7 +142,7 @@ img.data$tilt = as.numeric(img.data$tilt)
 # data$rda = df$rda
 
 man.tab = sort(table(img.data$man), decreasing=TRUE)
-stopifnot(length(man.tab) == 3)
+stopifnot(length(man.tab) == 4)
 manu= names(man.tab)
 manu[manu == 'TOSHIBA'] = "Toshiba"
 manu[manu == 'SIEMENS'] = "Siemens"
@@ -204,7 +205,7 @@ ddf$diffvol = (ddf$truevol - ddf$estvol) / 1000
 ddf$absdiff = abs(ddf$diffvol)
 
 long = melt(d, id.vars = c("id", "img", "rimg", 
-	"ssimg"))
+	"ssimg", "hdr"))
 
 long = makeint(long)
 long$id = as.numeric(factor(long$id))
@@ -223,8 +224,9 @@ res = ddply(ddf, .(img), function(x){
 	print(x$id[1])
 	xx = sapply(x[, rc], wmax)
 	xx = x$scen[xx]
-	print(xx)
+# 	print(xx)
 	names(xx) = rc
+  print(length(xx))
 	xx
 })
 
@@ -306,6 +308,33 @@ all.int.tests = ddply(long, .(smooth), function(df){
   })
 }, .progress="text")
 
+all.med.diffs = ddply(long, .(smooth), function(df){
+  df = df[df$int %in% c("0.01", "0.1"), ]
+  df = df[ order(df$id, df$variable, df$int), ]
+  diffs= ddply(df, .(variable), function(x){
+#     x = df[ df$variable == "Sensitivity", ]
+    runvar = x$variable[1]
+    x = x[, c("value", "img", "int")]
+    x = reshape(x, direction="wide", idvar = "img", timevar="int")
+    d = x$value.0.01 - x$value.0.1
+    check = wilcox.test(d)
+    tt.check = t.test(d)
+    return(c(median=median(d), mean=mean(d), sd=sd(d), wt.p.value = check$p.value,
+             tt.p.value = tt.check$p.value))
+  })
+}, .progress="text")
+
+stopifnot(all.med.diffs$wt.p.value == all.int.tests$wt.p.value)
+stopifnot(all.med.diffs$tt.p.value == all.int.tests$tt.p.value)
+
+all.med.diffs$median = round(all.med.diffs$median, 4)
+
+sm.diffs = all.med.diffs[ all.med.diffs$smooth == "Smoothed",]
+tmp.names = sm.diffs$variable
+sm.diffs = sm.diffs$median
+sm.diffs = sprintf("%0.4f", sm.diffs)
+names(sm.diffs) = tmp.names
+
 smooth = all.int.tests[ all.int.tests$smooth == "Smoothed",]
 pval <- function(pval) {
   x <- ifelse(pval < 0.001, "< 0.001", sprintf("= %03.3f", pval))
@@ -318,6 +347,53 @@ rownames(smooth) = smooth$variable
 smooth$variable = smooth$smooth = NULL
 smooth.dice = smooth["Dice Similarity Index",]
 @
+
+
+<<eval=TRUE>>=
+fname = file.path(resdir, "ICC_Results.Rda")
+load(fname)
+iscen = which(icc.vals$runvol == "truevol" & icc.vals$smooth == TRUE &
+                icc.vals$int == 0.01)
+smod = icc.smods[[iscen]]
+npt.icc = smod$ngrps['id']
+n.mod = smod$devcomp$dims['n']
+
+Nscans = fail.rates$N.NoGant[1]
+stopifnot(all(fail.rates$N.NoGant == fail.rates$N.NoGant[1]))
+
+ncheck = total.N - N.gantry - N.crani
+stopifnot(Nscans == ncheck)
+reg.icc = icc.vals$ICC[ icc.vals$smooth & icc.vals$runvol == 'truevol']
+
+fail.0.01 = fail.rates[ fail.rates$int == "0.01" & fail.rates$smooth == TRUE, "Bad.NoGant.pct"]
+fail.0.01 = round(fail.0.01 * 100, 1)
+
+fail.rates$value = paste0( fail.rates$"Bad.NoGant.sum", " (", round(fail.rates$"Bad.NoGant.pct"*100, 1), "%)")
+fail.rates = fail.rates[, c("int", "smooth", "value")]
+fail.rates$smooth = c("No", "Yes")[fail.rates$smooth +1] 
+colnames(fail.rates) = c("Fractional Intensity", "Smoothed", "Failures: N (%)")
+
+fail.tab = reshape(fail.rates, direction ="wide", idvar="Fractional Intensity", timevar = "Smoothed")
+colnames(fail.tab)[2:3] = c("Unsmoothed", "Smoothed")
+xtab = xtable(fail.tab, caption = paste0("{\\bf Failure Rates for each Processing Pipeline of Brain Extraction of the ", Nscans, " Scans Analyzed.}"), label="tab:fail", align = "lcr|r")
+addtorow <- list()
+addtorow$pos <- list()
+addtorow$pos[[1]] <- -1
+addtorow$command <- paste0("\\hline & \\multicolumn{2}{c}{Failure Scans: N (\\%)} \\\\")
+
+
+manu.tab = sort(manu.tab, decreasing=TRUE)
+icc.manu= names(manu.tab)
+icc.manu[icc.manu == 'TOSHIBA'] = "Toshiba"
+icc.manu[icc.manu == 'SIEMENS'] = "Siemens"
+icc.manu[icc.manu == 'NeuroLogica'] = "Neurologica"
+
+icc.0.01 = icc.vals[ icc.vals$runvol == "truevol" & icc.vals$smooth == TRUE &
+                icc.vals$int == 0.01,]
+icc.0.1 = icc.vals[ icc.vals$runvol == "truevol" & icc.vals$smooth == TRUE &
+                icc.vals$int == 0.1,]                
+@
+
 
 %\usepackage[all]{hypcap}
 \begin{document}
@@ -371,6 +447,28 @@ smooth.dice = smooth["Dice Similarity Index",]
 \address[ucla]{Department of Neurosurgery, David Geffen School of Medicine at UCLA, Los Angeles, CA, USA}
 
 
+<<eval=FALSE>>=
+fname = file.path(resdir, "Longitudinal_Skull_Strip_Data.Rda")
+load(fname)
+df = all.df[ grep("SS_0.01", all.df$fname, fixed=TRUE), ]
+
+total.N = nrow(df)
+
+
+fname = file.path(resdir, "ICC_data.Rda")
+load(fname)
+npt.icc = smod$ngrps['id']
+n.mod = smod$devcomp$dims['n']
+
+num_scans.icc = nrow(ddf) 
+fail = total.N - num_scans.icc
+pct.fail = round(fail/total.N * 100, 1)
+
+icc.ci = ICCest("id", "truevol", data=ddf)
+@
+
+
+
 \begin{abstract}
 \section*{Background}
 Computed Tomography (CT) imaging of the brain is commonly used in diagnostic settings.  Although CT scans are primarily used in clinical practice, they are increasingly used in research.  A fundamental processing step in brain imaging research is brain extraction -- the process of separating the brain tissue from all other tissues. Methods for brain extraction in head CT images have been informally proposed, but never formally validated.
@@ -378,21 +476,20 @@ Computed Tomography (CT) imaging of the brain is commonly used in diagnostic set
 
 \section*{Aim}
 
-To systematically analyze the performance of FSL's brain extraction tool (BET) on head CT images of patients with intracranial hemorrhage.  This was done by comparing the manual gold standard with the results of several versions of automatic brain extraction algorithms.  The effects of the choice of BET parameters and data smoothing is studied.
+To systematically analyze the performance of FSL's brain extraction tool (BET) on head CT images of patients with intracranial hemorrhage.  This was done by comparing the manual gold standard with the results of several versions of automatic brain extraction algorithms and estimating the consistency of automated segmentation of longitudinal scans.  The effects of the choice of BET parameters and data smoothing is studied.
 
 \section*{Methods}
 
-\Sexpr{num_scans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) stroke trial centers. Each image was thresholded using a $0-100$ Hounsfield units (HU) range. In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and holes in the brain mask produced by BET were filled.
-
-For validation purposes, intracranial masks of the brain were manually created for all image volumes by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.
+All images were thresholded using a $0-100$ Hounsfield units (HU) range. In one variant of the pipeline, data were smoothed using a 3-dimensional Gaussian kernel ($\sigma=1$mm$^3$) and re-thresholded to $0-100$ HU; in the other, data were not smoothed.  BET was applied using 1 of 3 fractional intensity (FI) thresholds: $0.01$, $0.1$, $0.35$ and any holes in the brain mask were filled.
+For validation against a manual segmentation, \Sexpr{nscans} images from \Sexpr{npt} patients with intracranial hemorrhage were selected from \Sexpr{n.ctr} different MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) stroke trial centers. Intracranial masks of the brain were manually created by expert CT readers.  The resulting brain tissue masks were quantitatively compared to the manual segmentations using sensitivity, specificity, accuracy, and the Dice Similarity Index (DSI).  Brain extraction across smoothing and FI thresholds were compared using the Wilcoxon signed-rank test.  An intraclass correlation (ICC) of intracranial volume was estimated on \Sexpr{Nscans} longitudinal scans from \Sexpr{total.Npt} patients.  
 
 \section*{Results}
 
-Smoothing images improves brain extraction results using BET for all measures measures except specificity (all $p < 0.01$, uncorrected), irrespective of the FI threshold.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$.  Thus, all reported results refer only to smoothed data using an FI of $0.01$ or $0.1$.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), with no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  These measures are all very high indicating that a range of FI values may produce visually indistinguishable brain extractions.
+Smoothing images improves brain extraction results using BET for all measures measures except specificity (all $p < 0.01$, uncorrected), irrespective of the FI threshold.  Using an FI of $0.01$ or $0.1$ performed better than $0.35$.  Thus, all reported results refer only to smoothed data using an FI of $0.01$ or $0.1$.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, median difference: $\Sexpr{sm.diffs['Sensitivity']}$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Accuracy"]}$, $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$), and DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Dice Similarity Index"]}$, $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$) and lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Specificity"]}$, $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$).  These measures are all very high indicating that a range of FI values may produce visually indistinguishable brain extractions.  Using smoothed data and an FI of $0.01$ had a low failure rate ($\Sexpr{fail.0.01}$\%) and the ICC estimate was high (\Sexpr{round(icc.0.01['good.est'], 3)}, 95\% CI: \Sexpr{round(icc.0.01['good.lower'], 3)}, \Sexpr{round(icc.0.01['good.upper'], 3)}) using successfully brain extracted scans.
 
 \section*{Conclusion}
 
-BET performs well at brain extraction on thresholded, $1$mm smoothed CT images with an FI of $0.01$ or $0.1$.  Smoothing before applying BET is an important step not previously discussed.  Analysis code is provided.
+BET performs well at brain extraction on thresholded, $1$mm$^3$ smoothed CT images with an FI of $0.01$ or $0.1$.  Smoothing before applying BET is an important step not previously discussed.  Analysis code is provided.
 
 \end{abstract}
 
@@ -408,21 +505,21 @@ CT \sep skull stripping \sep brain extraction \sep validation
 
 X-ray computed tomography (CT) scanning of the brain is widely available and is a commonly used diagnostic tool in clinical settings \citep{sahni_management_2007, chalela2007magnetic, schellinger1999standardized}. Though analysis of CT images is typically done by qualitative visual inspection, detailed quantification of information using neuroimaging tools is of interest.  The reason for this interest is that qualitative inspection of CT scans provides limited quantifiable information that can be used in research. A fundamental processing step for producing quantifiable and  reproducible information about the brain is to extract the brain from the CT image. This process is called brain extraction or skull stripping.  This step is necessary because CT images often contain non-brain human tissues (e.g. skull, eyes, skin) or non-human elements (e.g. pillow, medical devices) that are not pertinent to brain research.  We propose a validated automated solution to brain extraction in head CT scans using established neuroimaging software.
 
-In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (see \citet{wang2014knowledge} for an overview of methods).  While an extensive literature accompanied by software exist for brain MRI scans, the same is not true for brain CT scans.  Inspired by the brain MRI literature and software tools, we have adapted the Brain Extraction Tool (BET) \citep{smith_fast_2002}, a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from a CT scan.  Variations of this pipeline have been presented before in \citet{able}, and have been replicated in more detail in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images, which is the goal of our study. 
+In magnetic resonance imaging (MRI), brain extraction has been extensively studied and investigated (see \citet{wang2014knowledge} for an overview of methods).  While an extensive literature accompanied by software exist for brain MRI scans, the same is not true for brain CT scans.  As \citet{smith_fast_2002} introduced and validated the Brain Extraction Tool (BET), a function of the FSL \citep{jenkinson_fsl_2012} neuroimaging software (v5.0.4), to automatically extract the brain from MRI scans, we wish to adapt BET and validate its performance on brain extraction from CT scans.  Variations of this adapting BET for this purpose have been presented before in \citet{solomon_user-friendly_2007} and have been discussed more explicitly in \citet{rorden_age-specific_2012}.  Neither presented a formal validation against a set of manually segmented brain images nor estimated the performance in a large number of CT scans, which are the goals of our study. 
+
 
 
 \section{Methods}
 \subsection{ Participants and CT data}
-We used CT images patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) stroke trials \citep{morgan_preliminary_2008}.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}.   CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
+We used CT images from patients enrolled in the MISTIE (Minimally Invasive Surgery plus recombinant-tissue plasminogen activator for Intracerebral Evacuation) and ICES (Intraoperative CT-Guided Endoscopic Surgery) stroke trials \citep{morgan_preliminary_2008}.  These patients had an intracranial hemorrhage at time of scanning; for inclusion criteria, see \citet{mould_minimally_2013}.   CT data were collected as part of the Johns Hopkins Medicine IRB-approved MISTIE research studies with written consent from participants.  
 
 
 \subsection{Imaging Data}
 \subsubsection{Validation of Automated Head Segmentation}
-For the validation of automated segmentation against the gold standard, we analyzed \Sexpr{nscans} scans, corresponding to \Sexpr{npt} unique patients.  The study protocol was executed with minor, but important, differences across the \Sexpr{n.ctr} sites.  Scans were acquired using \Sexpr{manu[1]} ($N=\Sexpr{man.tab[1]}$), \Sexpr{manu[2]} ($N=\Sexpr{man.tab[2]}$), and \Sexpr{manu[3]} ($N=\Sexpr{man.tab[3]}$) scanners. Gantry tilt was observed in \Sexpr{n.gant} scans.  
-Slice thickness of the image varied within the scan for \Sexpr{n.var.slice} scans. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain and 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.  
+For the validation of automated segmentation against the gold standard, we analyzed \Sexpr{nscans} scans, corresponding to \Sexpr{npt} unique patients.  The study protocol was executed with minor, but important, differences across the \Sexpr{n.ctr} sites.  Scans were acquired using \Sexpr{manu[1]} ($N=\Sexpr{man.tab[1]}$), \Sexpr{manu[2]} ($N=\Sexpr{man.tab[2]}$), \Sexpr{manu[3]} ($N=\Sexpr{man.tab[3]}$), and \Sexpr{manu[4]} ($N=\Sexpr{man.tab[4]}$) scanners. Gantry tilt was observed in \Sexpr{n.gant} scans.  Slice thickness of the image varied within the scan for \Sexpr{n.var.slice} scans. For example, a scan may have 10 millimeter (mm) slices at the top and bottom of the brain and 5mm slices in the middle of the brain.  Therefore, the scans analyzed had different voxel (volume element) dimensions and image resolution prior to registration to the template.  These conditions represent how scans are presented for evaluation in many diagnostic cases.  
 
-\subsubsection{Intraclass Correlation Estimate}
-For the intraclass correlation estimate of brain volume, we collected \Sexpr{nscans_total} scans from \Sexpr{npt_total} patients.  Of these, we excluded \Sexpr{n_crani_problem} due to craniotomy and \Sexpr{n_gantry_problem} due to the gantry tilt correction forcing areas of the brain outside the field of view.  
+%\Sexpr{n_crani_problem} 
+%\Sexpr{n_gantry_problem} 
 
 
 \subsection{Manual and Automated Brain Extraction}
@@ -431,8 +528,9 @@ CT brain images and the binary brain tissue mask obtained using manual segmentat
 
 \subsection{Image Processing}
 The image processing pipeline can be seen in Figure~\ref{fig:framework}.
-Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}). 
-Images were converted to the Neuroimaging Informatics Technology Initiative (NIfTI) data format using \texttt{dcm2nii} (2009 version, provided with MRIcro \citep{rorden_stereotaxic_2000}).  Images were constrained to values $-1024$ and $3071$ HU to remove potential image rescaling errors and artifacts.  No interpolation was done for images with a variable slice thickness. Thickness was determined from the first slice converted and was assumed homogeneous throughout the image.  This assumption should have no affect on the estimates of performance described below, except for volume estimation where volume estimates can be wrong by an order of magnitude if variable slice thickness is accounted for properly.
+Images with gantry tilt were corrected using a customized MATLAB (The Mathworks, Natick, Massachusetts, USA) user-written script (\url{http://bit.ly/1ltIM8c}).  Although gantry tilt correction is not inherently necessary for brain extraction, it is required for rigid co-registration of scans within a patient, which is a common processing step in longitudinal analysis of images post brain extraction. 
+
+Images were converted to the Neuroimaging Informatics Technology Initiative (NIfTI) data format using \texttt{dcm2nii} (2009 version, provided with MRIcro \citep{rorden_stereotaxic_2000}).  Images were constrained to values $-1024$ and $3071$ HU to remove potential image rescaling errors and artifacts.  No interpolation was done for images with a variable slice thickness. Thickness was determined from the first slice converted and was assumed homogeneous throughout the image.  This assumption should have no affect on the estimates of performance described below except for volume estimation, where volume estimates can be wrong by an order of magnitude if variable slice thickness is not accounted for properly.
 
 
 \tikzstyle{bblock} = [rectangle, draw, text width=8em, text centered, minimum height=2em, rounded corners]
@@ -449,7 +547,7 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \node [bblock, below of=dcmnii] (thresh) {Threshold to 0-100 HU };
 \node [bblock, above right=1cm and 1.25cm of dcmnii] (gantry) {Gantry tilt correction};
 \node [bblock, below of=thresh, left of=thresh] (nosmooth) {No Smooth};
-\node [bblock, below of=thresh, right of=thresh] (smooth) {Smooth ($1$mm)};
+\node [bblock, below of=thresh, right of=thresh] (smooth) {Smooth ($1$mm$^3$)};
 
 \node [bblock, below of=nosmooth, right of=nosmooth] (BET) {BET};
 
@@ -482,11 +580,11 @@ Images were converted to the Neuroimaging Informatics Technology Initiative (NIf
 \path [line] (Mask) -- (Fillin);
 \path [line] (Fillin) -- (Measures);
 \end{tikzpicture}
-\caption{{\bf Processing Pipeline}.  Images in DICOM (Digital Imaging and Communications in Medicine) format were gantry tilt corrected if necessary and converted to NIfTI (Neuroimaging Informatics Technology Initiative) format using \texttt{dcm2nii}.  After NIfTI conversion, the data is thresholded to tissue ranges of $0$-$100$ Hounsfield units (HU).  In one variant of the pipeline, the data was smoothed using a Gaussian kernel ($\sigma=1$mm); in the other, the data was not smoothed.  BET was applied to the image using 3 different fractional intensity (FI) values: $0.01$, $0.1$, $0.35$.  The resultant image was masked to values greater than 0 HU and FSL was used to fill in any holes.  These filled masks were used in comparison to the manually segmented image.  }
+\caption{{\bf Processing Pipeline}.  Images in DICOM (Digital Imaging and Communications in Medicine) format were gantry tilt corrected if necessary and converted to NIfTI (Neuroimaging Informatics Technology Initiative) format using \texttt{dcm2nii}.  After NIfTI conversion, the data is thresholded to tissue ranges of $0-100$ Hounsfield units (HU).  In one variant of the pipeline, the data was smoothed using a 3-dimensional Gaussian kernel ($\sigma=1$mm$^3$); in the other, the data was not smoothed.  BET was applied to the image using 3 different fractional intensity (FI) values: $0.01$, $0.1$, $0.35$.  The resultant image was masked to values greater than $0$ HU and FSL was used to fill in any holes.  These filled masks were used in comparison to the manually segmented image.  }
 \label{fig:framework}
 \end{figure}
 
-Each image was thresholded using the brain tissue range ($0$-$100$ HU).  In one variant of the pipeline, data were smoothed using a Gaussian kernel ($\sigma=1$mm) and re-thresholded to $0$-$100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as recommended in \citet{rorden_age-specific_2012}), $0.1$, $0.01$.  This FI parameter varies between $0$ and $1$ and determines the location of the edge of the segmented brain image; smaller values correspond to larger brain masks. After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
+Each image was thresholded using the brain tissue range ($0-100$ HU).  In one variant of the pipeline, data were smoothed using a 3-dimensional (3D) Gaussian kernel ($\sigma=1$mm$^3$) and re-thresholded to $0-100$ HU; in the other, data were not smoothed.  BET was then applied, varying the fractional intensity (FI) parameter to determine its influence on performance: we used values of $0.35$ (as discussed in \citet{rorden_age-specific_2012}), $0.1$, and $0.01$.  This FI parameter varies between $0$ and $1$ and determines the location of the edge of the segmented brain image; smaller values correspond to larger brain masks. After BET was applied, we created a brain mask taking values $> 0$ HU and filled the holes in the mask (using \verb|fslmaths -fillh|).  
 
 
 \subsection{Measuring and Testing Brain Extraction Performance}
@@ -497,27 +595,15 @@ We compared the masks obtained using the various choices of parameters to the ma
 We calculated the paired difference of each measure using different pipelines (e.g. $0.01$ vs. $0.1$, smoothed data).  We tested whether these differences were statistically different from zero using the Wilcoxon signed-rank test.
 
 
-<<>>=
-fname = file.path(resdir, "Longitudinal_Skull_Strip_Data.Rda")
-load(fname)
-df = all.df[ grep("SS_0.01", all.df$fname, fixed=TRUE), ]
 
-total.N = nrow(df)
+\subsection{Intraclass Correlation Estimate}
+In addition to a comparison of manual and automatic brain extraction, we estimated an intraclass correlation (ICC) of intracranial volume (ICV).  For this, we collected \Sexpr{total.N} scans.  Of these scans, we excluded \Sexpr{N.crani} scans due to craniotomy and \Sexpr{N.gantry} due to the gantry tilt correction forcing areas of the brain outside the field of view.   
 
+We executed the previous brain extraction pipelines on the remaining \Sexpr{Nscans} scans.  Of these scans, we assessed brain extraction quality: any scan excluding a significant portion of the brain or holes due to mask self-intersection (i.e. holes) were classified as a failure.  These scans represent \Sexpr{total.Npt} patients from \Sexpr{n.ctr.icc} sites, with a mean (SD) of \Sexpr{round(n.per.pt["mean"], 1)} (\Sexpr{round(n.per.pt["sd"],1)}) scans per patient.  Scans were acquired using \Sexpr{icc.manu[1]} ($N=\Sexpr{manu.tab[1]}$), \Sexpr{icc.manu[2]} ($N=\Sexpr{manu.tab[2]}$), \Sexpr{icc.manu[3]} ($N=\Sexpr{manu.tab[3]}$), \Sexpr{icc.manu[4]} ($N=\Sexpr{manu.tab[4]}$), \Sexpr{icc.manu[5]} ($N=\Sexpr{manu.tab[5]}$), and \Sexpr{icc.manu[6]} ($N=\Sexpr{manu.tab[6]}$) scanners.
 
-fname = file.path(resdir, "ICC_data.Rda")
-load(fname)
-npt.icc = smod$ngrps['id']
-n.mod = smod$devcomp$dims['n']
+From each scan, we calculated ICV by multiplying the number of voxels in the brain mask by the dimensions of each voxel.  In scans with variable slice thickness, we multiplied the in-plane resolution of each voxel by the slice thickness value from the DICOM header to correctly account for the differing voxel dimensions.  
 
-num_scans.icc = nrow(ddf) 
-fail = total.N - num_scans.icc
-pct.fail = round(fail/total.N * 100, 1)
-
-icc.ci = ICCest("id", "truevol", data=ddf)
-@
-
-
+Using only the scans with successful brain extraction, we estimated the ICC and its confidence interval (CI) using the variance components from a one-way ANOVA, using patients as groups, for unbalanced repeated measures \citep{searle_linear_2012, thomas_interval_1978, donner_use_1979, lessells_unrepeatable_1987} using the ICC package \citep{wolak_guidelines_2012} in R (\url{http://cran.r-project.org/}).  
 
 %and the Jaccard index is defined as:
 %$$
@@ -529,10 +615,11 @@ stopifnot(all(all.smooth.tests$wt.p.value < 0.01))
 @
 
 \section{Results}
+\subsection{Manual and Automated Brain Extraction}
 Figure~\ref{fig:metrics}\protect\subref*{unsmoothed} illustrates the performance of each variation of the BET pipeline in Figure~\ref{fig:framework}.  The pipelines using smoothing (top) perform better than the unsmoothed pipelines (bottom) on all measures except specificity (all $p < 0.01$, uncorrected).  We also note that BET performs poorly on some scans without smoothing.  
 
-Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction for the pipelines using smoothed images.   Because the performance for all metrics was high when using smoothed images, it was necessary to change the y-axis from $[0,1]$ to $[0.95,1]$. 
-Using an FI of $0.01$ or $0.1$ performed better than $0.35$; thus, we will focus and compare results for these values of FI only for the case when BET was applied to smoothed images.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$), and no difference in accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$) or DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all very high, indicating that multiple choices of parameters work well for brain extraction after CT image processing.
+Figure~\ref{fig:metrics}\protect\subref*{smoothed} displays the performance for brain extraction for the pipelines using smoothed images.   Because the performance for all metrics was high when using smoothed images, it was necessary to change the y-axis from $[0,1]$ to $[0.94,1]$. 
+Using an FI of $0.01$ or $0.1$ performed better than $0.35$; thus, we will focus and compare results for these values of FI only for the case when BET was applied to smoothed images.  Using an FI of $0.01$ had a higher median sensitivity ($\Sexpr{ smooth["Sensitivity", "median.0.01"] }$) than an FI of $0.1$ ($\Sexpr{ smooth["Sensitivity", "median.0.1"] }$, median difference: $\Sexpr{sm.diffs['Sensitivity']}$, $p\Sexpr{ smooth["Sensitivity", "wt.p.value"] }$), accuracy ($\Sexpr{ smooth["Accuracy", "median.0.01"] }$ vs. $\Sexpr{ smooth["Accuracy", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Accuracy"]}$, $p\Sexpr{ smooth["Accuracy", "wt.p.value"] }$), and DSI ($\Sexpr{ smooth["Dice Similarity Index", "median.0.01"] }$ vs. $\Sexpr{ smooth["Dice Similarity Index", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Dice Similarity Index"]}$, $p\Sexpr{ smooth["Dice Similarity Index", "wt.p.value"] }$) and lower specificity ($\Sexpr{ smooth["Specificity", "median.0.01"] }$ vs. $\Sexpr{ smooth["Specificity", "median.0.1"] }$; median difference: $\Sexpr{sm.diffs["Specificity"]}$, $p\Sexpr{ smooth["Specificity", "wt.p.value"] }$).  Overall, regardless of p-values, these measures are all very high, indicating that multiple choices of parameters work well for brain extraction after CT image processing.
 
 % Overall, using an FI of $0.35$ performs worse overall than $0.01$ or $0.1$ for all measures other than specificity.  
 % 
@@ -583,6 +670,7 @@ dev.off()
 <<CT_Skull_Stripping_Figure2b, fig.height=7, fig.width=7, dpi = 600, fig.dev="png", fig.cap=CT_Skull_Stripping_Figure2>>=
 pngname = file.path(figdir, "CT_Skull_Stripping_Figure2b.png")
 png(pngname)
+stopifnot(all(long[ long$smooth == "Smoothed","value"] > 0.95))
 g2 = qplot(x = v2, y = value, data =long[ long$smooth == "Smoothed",],
           colour=int, geom=c("boxplot")) + xlab("Metric") + ylab("Value") +
   scale_color_discrete("Fractional Intensity") + 
@@ -597,7 +685,7 @@ g2 = qplot(x = v2, y = value, data =long[ long$smooth == "Smoothed",],
         plot.title = element_text(hjust = 0.8),
         strip.text = element_text(size = tsize + 4),
         axis.text  = element_text(size=tsize)) + 
-  scale_y_continuous(limits=c(.95, 1))
+  scale_y_continuous(limits=c(.94, 1))
 d = data.frame(label="B", smooth="Unsmoothed")
 g2 = g2 + geom_text(data=d, x = 4, y = 0.953, size=20,
                   aes(label=label), colour="black")
@@ -679,15 +767,38 @@ Although Figure~\ref{fig:metrics} indicates that using FI of $0.01$ or $0.1$ pro
   \label{ss:35_nosmooth}
 	\includegraphics[width=.315\textwidth]{figure/{101-307_20061110_1638_CT_5_RM_Head_SS_0.35_nopresmooth_Mask}.png} 
 }
-\caption{{\bf Example Case where Smoothing before BET is Required} For one subject, the CT image is displayed with the brain extracted mask in red after running all pipelines.  Panels~\protect\subref*{ss:01_smooth}, \protect\subref*{ss:1_smooth}, and \protect\subref*{ss:35_smooth} represent applying BET using FI of $0.01$, $0.1$, and $0.35$, respectively, to smoothed data. Panels~\protect\subref*{ss:01_nosmooth}, \protect\subref*{ss:1_nosmooth}, and \protect\subref*{ss:35_nosmooth} correspond to applying BET using FI $0.01$, $0.1$, and $0.35$ on unsmoothed data.  Smoothing images improves brain extraction with BET.
+\caption{{\bf Example Case where Smoothing before BET is Required.} For one subject, the CT image is displayed with the brain extracted mask in red after running all pipelines.  Panels~\protect\subref*{ss:01_smooth}, \protect\subref*{ss:1_smooth}, and \protect\subref*{ss:35_smooth} represent applying BET using FI of $0.01$, $0.1$, and $0.35$, respectively, to smoothed data. Panels~\protect\subref*{ss:01_nosmooth}, \protect\subref*{ss:1_nosmooth}, and \protect\subref*{ss:35_nosmooth} correspond to applying BET using FI $0.01$, $0.1$, and $0.35$ on unsmoothed data.  Smoothing images improves brain extraction with BET.
 }
 \label{fig:ss_example}
 \end{figure}
 
-\section{Conclusions}
-Quantitative procedures of based on data contained in head CT images require brain-only images for analysis. Indeed, brain volume estimation, intensity normalization, segmentation, and registration are a few examples of image processing steps that fundamentally rely on the existence of a reliable brain mask.  We have introduced the first validated automated brain extraction pipeline for head CT images. Validation was done using gold-standard manual segmentations of brain tissue.  A novel finding is that smoothing the data using a conservative smoother ($1$mm Gaussian kernel) and using an FI of $0.01$ or $0.1$ provides good brain extraction for the sample studied.  These choices make a large difference in the performance of the algorithms and have not been previously reported in the literature.
 
-Although the sample size was relatively small, the CT images used are from different people, different centers, and different scanners.  More validation is necessary, which can only be done using more hand-segmented brain CT images. However, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units).  We are using a population of patients with intracranial hemorrhage and we note the accuracy of BET may be dependent on factors such as hematoma size, which may change the distribution of Hounsfield units or compress of brain structures.  We observed good performance of BET in these patients using the parameters described and believe that this may indicate a more robust result than if brains from individuals with no pathology were used.
+
+\subsection{Failure Rate and Intraclass Correlation Estimate}
+In Table~\ref{tab:fail}, the estimated failure rates were lower using the smoothed data compared to the unsmoothed data.  We observe the lowest rate of failure in the pipelines using smoothed data and an FI of $0.01$ or $0.1$.  Though this represents a large number of scans, these failure rates may be affected by patient-level characteristics, which includes the center where the patient was scanned.  
+
+<<results="asis">>=
+print.xtable(xtab, type="latex", add.to.row=addtorow, hline.after = c(0,nrow(xtab)), include.rownames=FALSE)
+@
+
+The ICC estimate was high using the successfully brain extracted scans from the smoothed data with an FI of $0.01$ (ICC: \Sexpr{round(icc.0.01['good.est'], 3)}, 95\% CI: \Sexpr{round(icc.0.01['good.lower'], 3)}, \Sexpr{round(icc.0.01['good.upper'], 3)}) and $0.1$ (ICC: \Sexpr{round(icc.0.1['good.est'], 3)}, 95\% CI: \Sexpr{round(icc.0.1['good.lower'], 3)}, \Sexpr{round(icc.0.1['good.upper'], 3)}).  In Figure~\ref{fig:icc}, we illustrate the ICV estimates for successful brain extraction in scans 10 or fewer days post baseline scan (gray lines).  The black lines represent ICV estimates over time for $10$ randomly selected patients.  The blue line represents a local regression (LOESS) \citep{cleveland_local_1992} line, which represents an estimate of the average ICV over time.  This LOESS line is relatively flat, indicating that the ICV estimate averaged over patients is stable.  We also observe that although within-patient variability exists for ICV estimates, the variability across patients is greater.  
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.55\textwidth]{../results/{Intraclass_Correlation_no_crani_check_day10_black_0.01_truevol}.png}
+\caption{{\bf Intracranial Volume (ICV) Estimates for Scans Less than 10 Days Post-Baseline.} Each separate color represents an individual patient.  The black line represents a local regression (LOESS) scatterplot smoother.  
+}
+\label{fig:icc}
+\end{figure}
+
+
+
+
+\section{Conclusions}
+Quantitative procedures based on data contained in head CT images require brain-only images for analysis. Indeed, intracranial volume estimation, intensity normalization, segmentation, and registration are a few examples of image processing steps that fundamentally rely on the existence of a reliable brain mask.  We have introduced the first validated automated brain extraction pipeline for head CT images. Validation was done using gold-standard manual segmentations of brain tissue.  A novel finding is that smoothing the data using a conservative smoother ($1$mm$^3$ 3D Gaussian kernel) and using an FI of $0.01$ or $0.1$ provides good brain extraction for the sample studied.  These choices make a large difference in the performance of the algorithms and have not been previously reported in the literature.
+
+Although the sample size was relatively small for the gold standard validation, the CT images used are from different people, different centers, and different scanners.  We have also shown that failure rates are low (5\%) using smoothed data and an FI of $0.01$ in a large number of scans.
+Therefore, it is likely that the parameters and approaches described here will generalize well because CT scan data are expressed in standardized units (Hounsfield units) and multiple scanner types were investigated at multiple sites under multiple scanning parameters.  We are using a population of patients with intracranial hemorrhage and the accuracy of BET may be dependent on factors such as hematoma size, which may change the distribution of Hounsfield units or compress of brain structures.  We observed good performance of BET in these patients using the parameters described and believe that this may indicate a more robust result than if brains from individuals with no pathology were used.
 
 The research presented here is fully reproducible and we provide ready-to-use software for CT brain extraction. The \texttt{R} function designed to perform brain extraction is located at
 \url{http://bit.ly/CTBET_RCODE} and example bash script can be downloaded here \url{http://bit.ly/CTBET_BASH}.  As our software is publicly available and is based on open-source, free programs (FSL and R), our method is readily available to all users.
@@ -721,6 +832,8 @@ and the Dice Similarity Index (DSI) is defined as
 $$
 \frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}.
 $$
+
+
 
 
 \newpage

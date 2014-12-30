@@ -1,3 +1,6 @@
+ICC
+Matrix
+RColorBrewer
 arules
 base
 bitops
@@ -6,14 +9,14 @@ fslr
 ggplot2
 gridExtra
 knitr
-Matrix
 matrixStats
 oro.dicom
 oro.nifti
 plyr
 qdap
 qdapDictionaries
+qdapRegex
 qdapTools
-RColorBrewer
 reshape2
 stringr
+xtable

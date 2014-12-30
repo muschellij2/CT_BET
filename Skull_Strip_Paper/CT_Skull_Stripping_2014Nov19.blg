@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: CT_Skull_Stripping_2014Nov19.aux
+The style file: elsarticle-num-names.bst
+Database file #1: CT_Skull_Stripping.bib
+You've used 18 entries,
+            2793 wiz_defined-function locations,
+            751 strings with 9774 characters,
+and the built_in function-call counts, 12066 in all, are:
+= -- 706
+> -- 493
+< -- 8
++ -- 194
+- -- 154
+* -- 1787
+:= -- 1582
+add.period$ -- 18
+call.type$ -- 18
+change.case$ -- 77
+chr.to.int$ -- 18
+cite$ -- 18
+duplicate$ -- 925
+empty$ -- 891
+format.name$ -- 208
+if$ -- 2125
+int.to.chr$ -- 1
+int.to.str$ -- 19
+missing$ -- 238
+newline$ -- 64
+num.names$ -- 54
+pop$ -- 165
+preamble$ -- 1
+purify$ -- 90
+quote$ -- 0
+skip$ -- 208
+stack$ -- 0
+substring$ -- 655
+swap$ -- 950
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 106
+warning$ -- 0
+while$ -- 70
+width$ -- 0
+write$ -- 223

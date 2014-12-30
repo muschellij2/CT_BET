@@ -1,0 +1,167 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\url{#1}\endgroup}\fi
+\providecommand{\bibinfo}[2]{#2}
+
+\bibitem[{Sahni and Weinberger(2007)}]{sahni_management_2007}
+\bibinfo{author}{R.~Sahni}, \bibinfo{author}{J.~Weinberger},
+  \bibinfo{title}{Management of intracerebral hemorrhage},
+  \bibinfo{journal}{Vascular Health and Risk Management}
+  \bibinfo{volume}{3}~(\bibinfo{number}{5}) (\bibinfo{year}{2007})
+  \bibinfo{pages}{701--709}, ISSN \bibinfo{issn}{1176-6344}.
+
+\bibitem[{Chalela et~al.(2007)Chalela, Kidwell, Nentwich, Luby, Butman,
+  Demchuk, Hill, Patronas, Latour, and Warach}]{chalela2007magnetic}
+\bibinfo{author}{J.~A. Chalela}, \bibinfo{author}{C.~S. Kidwell},
+  \bibinfo{author}{L.~M. Nentwich}, \bibinfo{author}{M.~Luby},
+  \bibinfo{author}{J.~A. Butman}, \bibinfo{author}{A.~M. Demchuk},
+  \bibinfo{author}{M.~D. Hill}, \bibinfo{author}{N.~Patronas},
+  \bibinfo{author}{L.~Latour}, \bibinfo{author}{S.~Warach},
+  \bibinfo{title}{Magnetic resonance imaging and computed tomography in
+  emergency assessment of patients with suspected acute stroke: a prospective
+  comparison}, \bibinfo{journal}{The Lancet}
+  \bibinfo{volume}{369}~(\bibinfo{number}{9558}) (\bibinfo{year}{2007})
+  \bibinfo{pages}{293--298}.
+
+\bibitem[{Schellinger et~al.(1999)Schellinger, Jansen, Fiebach, Hacke, and
+  Sartor}]{schellinger1999standardized}
+\bibinfo{author}{P.~D. Schellinger}, \bibinfo{author}{O.~Jansen},
+  \bibinfo{author}{J.~B. Fiebach}, \bibinfo{author}{W.~Hacke},
+  \bibinfo{author}{K.~Sartor}, \bibinfo{title}{A standardized MRI stroke
+  protocol comparison with CT in hyperacute intracerebral hemorrhage},
+  \bibinfo{journal}{Stroke} \bibinfo{volume}{30}~(\bibinfo{number}{4})
+  (\bibinfo{year}{1999}) \bibinfo{pages}{765--768}.
+
+\bibitem[{Wang et~al.(2014)Wang, Nie, Yap, Li, Shi, Geng, Guo, Shen,
+  Initiative, and {others}}]{wang2014knowledge}
+\bibinfo{author}{Y.~Wang}, \bibinfo{author}{J.~Nie}, \bibinfo{author}{P.-T.
+  Yap}, \bibinfo{author}{G.~Li}, \bibinfo{author}{F.~Shi},
+  \bibinfo{author}{X.~Geng}, \bibinfo{author}{L.~Guo},
+  \bibinfo{author}{D.~Shen}, \bibinfo{author}{A.~D.~N. Initiative},
+  \bibinfo{author}{{others}}, \bibinfo{title}{Knowledge-guided robust mri brain
+  extraction for diverse large-scale neuroimaging studies on humans and
+  non-human primates}, \bibinfo{journal}{PloS one}
+  \bibinfo{volume}{9}~(\bibinfo{number}{1}) (\bibinfo{year}{2014})
+  \bibinfo{pages}{e77810}.
+
+\bibitem[{Smith(2002)}]{smith_fast_2002}
+\bibinfo{author}{S.~M. Smith}, \bibinfo{title}{Fast robust automated brain
+  extraction}, \bibinfo{journal}{Human Brain Mapping}
+  \bibinfo{volume}{17}~(\bibinfo{number}{3}) (\bibinfo{year}{2002})
+  \bibinfo{pages}{143--155}, ISSN \bibinfo{issn}{1097-0193},
+  \doi{\bibinfo{doi}{10.1002/hbm.10062}}.
+
+\bibitem[{Jenkinson et~al.(2012)Jenkinson, Beckmann, Behrens, Woolrich, and
+  Smith}]{jenkinson_fsl_2012}
+\bibinfo{author}{M.~Jenkinson}, \bibinfo{author}{C.~F. Beckmann},
+  \bibinfo{author}{T.~E.~J. Behrens}, \bibinfo{author}{M.~W. Woolrich},
+  \bibinfo{author}{S.~M. Smith}, \bibinfo{title}{{FSL}},
+  \bibinfo{journal}{{NeuroImage}} \bibinfo{volume}{62}~(\bibinfo{number}{2})
+  (\bibinfo{year}{2012}) \bibinfo{pages}{782--790}, ISSN
+  \bibinfo{issn}{1053-8119},
+  \doi{\bibinfo{doi}{10.1016/j.neuroimage.2011.09.015}}.
+
+\bibitem[{Solomon et~al.(2007)Solomon, Raymont, Braun, Butman, and
+  Grafman}]{solomon_user-friendly_2007}
+\bibinfo{author}{J.~Solomon}, \bibinfo{author}{V.~Raymont},
+  \bibinfo{author}{A.~Braun}, \bibinfo{author}{J.~A. Butman},
+  \bibinfo{author}{J.~Grafman}, \bibinfo{title}{User-friendly software for the
+  analysis of brain lesions ({ABLe})}, \bibinfo{journal}{Computer Methods and
+  Programs in Biomedicine} \bibinfo{volume}{86}~(\bibinfo{number}{3})
+  (\bibinfo{year}{2007}) \bibinfo{pages}{245--254}, ISSN
+  \bibinfo{issn}{0169-2607}, \doi{\bibinfo{doi}{10.1016/j.cmpb.2007.02.006}}.
+
+\bibitem[{Rorden et~al.(2012)Rorden, Bonilha, Fridriksson, Bender, and
+  Karnath}]{rorden_age-specific_2012}
+\bibinfo{author}{C.~Rorden}, \bibinfo{author}{L.~Bonilha},
+  \bibinfo{author}{J.~Fridriksson}, \bibinfo{author}{B.~Bender},
+  \bibinfo{author}{H.-O. Karnath}, \bibinfo{title}{Age-specific {CT} and {MRI}
+  templates for spatial normalization}, \bibinfo{journal}{{NeuroImage}}
+  \bibinfo{volume}{61}~(\bibinfo{number}{4}) (\bibinfo{year}{2012})
+  \bibinfo{pages}{957--965}, ISSN \bibinfo{issn}{1053-8119},
+  \doi{\bibinfo{doi}{10.1016/j.neuroimage.2012.03.020}}.
+
+\bibitem[{Morgan et~al.(2008)Morgan, Zuccarello, Narayan, Keyl, Lane, and
+  Hanley}]{morgan_preliminary_2008}
+\bibinfo{author}{T.~Morgan}, \bibinfo{author}{M.~Zuccarello},
+  \bibinfo{author}{R.~Narayan}, \bibinfo{author}{P.~Keyl},
+  \bibinfo{author}{K.~Lane}, \bibinfo{author}{D.~Hanley},
+  \bibinfo{title}{Preliminary findings of the minimally-invasive surgery plus
+  {rtPA} for intracerebral hemorrhage evacuation ({MISTIE}) clinical trial},
+  in: \bibinfo{booktitle}{Cerebral Hemorrhage}, \bibinfo{publisher}{Springer},
+  \bibinfo{pages}{147--151}, \bibinfo{year}{2008}.
+
+\bibitem[{Mould et~al.(2013)Mould, Carhuapoma, Muschelli, Lane, Morgan, McBee,
+  Bistran-Hall, Ullman, Vespa, Martin, Awad, Zuccarello, and
+  Hanley}]{mould_minimally_2013}
+\bibinfo{author}{W.~A. Mould}, \bibinfo{author}{J.~R. Carhuapoma},
+  \bibinfo{author}{J.~Muschelli}, \bibinfo{author}{K.~Lane},
+  \bibinfo{author}{T.~C. Morgan}, \bibinfo{author}{N.~A. McBee},
+  \bibinfo{author}{A.~J. Bistran-Hall}, \bibinfo{author}{N.~L. Ullman},
+  \bibinfo{author}{P.~Vespa}, \bibinfo{author}{N.~A. Martin},
+  \bibinfo{author}{I.~Awad}, \bibinfo{author}{M.~Zuccarello},
+  \bibinfo{author}{D.~F. Hanley}, \bibinfo{title}{Minimally Invasive Surgery
+  Plus Recombinant Tissue-type Plasminogen Activator for Intracerebral
+  Hemorrhage Evacuation Decreases Perihematomal Edema},
+  \bibinfo{journal}{Stroke} \bibinfo{volume}{44}~(\bibinfo{number}{3})
+  (\bibinfo{year}{2013}) \bibinfo{pages}{627--634}, ISSN
+  \bibinfo{issn}{0039-2499, 1524-4628},
+  \doi{\bibinfo{doi}{10.1161/STROKEAHA.111.000411}}.
+
+\bibitem[{Rorden and Brett(2000)}]{rorden_stereotaxic_2000}
+\bibinfo{author}{C.~Rorden}, \bibinfo{author}{M.~Brett},
+  \bibinfo{title}{Stereotaxic Display of Brain Lesions},
+  \bibinfo{journal}{Behavioural Neurology}
+  \bibinfo{volume}{12}~(\bibinfo{number}{4}) (\bibinfo{year}{2000})
+  \bibinfo{pages}{191--200}, ISSN \bibinfo{issn}{0953-4180},
+  \doi{\bibinfo{doi}{10.1155/2000/421719}}.
+
+\bibitem[{Dice(1945)}]{dice_measures_1945}
+\bibinfo{author}{L.~R. Dice}, \bibinfo{title}{Measures of the amount of
+  ecologic association between species}, \bibinfo{journal}{Ecology}
+  \bibinfo{volume}{26}~(\bibinfo{number}{3}) (\bibinfo{year}{1945})
+  \bibinfo{pages}{297--302}.
+
+\bibitem[{Searle(2012)}]{searle_linear_2012}
+\bibinfo{author}{S.~R. Searle}, \bibinfo{title}{Linear models},
+  \bibinfo{publisher}{John Wiley \& Sons}, \bibinfo{year}{2012}.
+
+\bibitem[{Thomas and Hultquist(1978)}]{thomas_interval_1978}
+\bibinfo{author}{J.~D. Thomas}, \bibinfo{author}{R.~A. Hultquist},
+  \bibinfo{title}{Interval estimation for the unbalanced case of the one-way
+  random effects model}, \bibinfo{journal}{The Annals of Statistics}
+  (\bibinfo{year}{1978}) \bibinfo{pages}{582--587}.
+
+\bibitem[{Donner(1979)}]{donner_use_1979}
+\bibinfo{author}{A.~Donner}, \bibinfo{title}{The use of correlation and
+  regression in the analysis of family resemblance}, \bibinfo{journal}{American
+  journal of epidemiology} \bibinfo{volume}{110}~(\bibinfo{number}{3})
+  (\bibinfo{year}{1979}) \bibinfo{pages}{335--342}.
+
+\bibitem[{Lessells and Boag(1987)}]{lessells_unrepeatable_1987}
+\bibinfo{author}{C.~M. Lessells}, \bibinfo{author}{P.~T. Boag},
+  \bibinfo{title}{Unrepeatable repeatabilities: a common mistake},
+  \bibinfo{journal}{The Auk}  (\bibinfo{year}{1987}) \bibinfo{pages}{116--121}.
+
+\bibitem[{Wolak et~al.(2012)Wolak, Fairbairn, and
+  Paulsen}]{wolak_guidelines_2012}
+\bibinfo{author}{M.~E. Wolak}, \bibinfo{author}{D.~J. Fairbairn},
+  \bibinfo{author}{Y.~R. Paulsen}, \bibinfo{title}{Guidelines for estimating
+  repeatability}, \bibinfo{journal}{Methods in Ecology and Evolution}
+  \bibinfo{volume}{3}~(\bibinfo{number}{1}) (\bibinfo{year}{2012})
+  \bibinfo{pages}{129--137}, ISSN \bibinfo{issn}{2041-210X},
+  \doi{\bibinfo{doi}{10.1111/j.2041-210X.2011.00125.x}}.
+
+\bibitem[{Cleveland et~al.(1992)Cleveland, Grosse, and
+  Shyu}]{cleveland_local_1992}
+\bibinfo{author}{W.~S. Cleveland}, \bibinfo{author}{E.~Grosse},
+  \bibinfo{author}{W.~M. Shyu}, \bibinfo{title}{Local regression models},
+  \bibinfo{journal}{Statistical models in S}  (\bibinfo{year}{1992})
+  \bibinfo{pages}{309--376}.
+
+\end{thebibliography}
