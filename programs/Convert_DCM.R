@@ -4,13 +4,17 @@ library(fslr)
 library(oro.dicom)
 library(bitops)
 library(arules)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 options(fsl.path='/usr/local/fsl')
 
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
 
-ROIformat = TRUE
+gantry.ids = c("102-331", "102-331", "102-331", "102-374", "102-374", "152-302", 
+               "152-302", "157-329", "157-329", "173-404", "173-404", "179-395", 
+               "179-395", "225-503", "225-503", "225-515", "225-515", "230-352", 
+               "230-352", "232-512", "232-512")
+ROIformat = FALSE
 study = "Original_Images"
 if (ROIformat) {
   study = "ROI_images"
@@ -26,13 +30,18 @@ ids = basename(ids)
 ids = grep("\\d\\d\\d-(\\d|)\\d\\d\\d", ids, value=TRUE)
 length(ids)
 
-iid = 13
+iid = 1
 # 13
+
+
 
 for (iid in seq_along(ids)){
   
   id <- ids[iid]
-
+  gt_correct = TRUE
+  if (id == "222-358") {
+    gt_correct = FALSE
+  }
   basedir = file.path(homedir, id)
   ssdir = file.path(basedir, "Skull_Stripped")
   if (!file.exists(ssdir)){
@@ -69,6 +78,7 @@ for (iid in seq_along(ids)){
                             removeDups=removeDups,
                             dcmsortopt=dcmsortopt, 
                             ROIformat = ROIformat,
+                            gt_correct = gt_correct,
                             dcm2niicmd=dcm2niicmd))
 #     gt_correct=TRUE,
 #     add.img.dir=FALSE
@@ -91,10 +101,14 @@ for (iid in seq_along(ids)){
       
       scen = expand.grid(int=c("0.01", "0.1", "0.35"),
                          presmooth=c(TRUE, FALSE),
-                         refill = c(TRUE, FALSE))
+                         # refill = c(TRUE, FALSE)
+                         refill = c(FALSE)
+                         )
       rownames(scen)= NULL
       w = which(!scen$presmooth & scen$refill)
-      scen = scen[-w, ]
+      if (length(w) > 0) {
+        scen = scen[-w, ]
+      }
             
       for (iimg in seq_along(imgs)){
 
@@ -121,15 +135,19 @@ for (iid in seq_along(ids)){
 
           
           outfile = paste0(ofile, "_", int, app, re_app)
-          x = CT_Skull_Strip(img = img, 
-                             outfile = outfile, 
-                             retimg=FALSE, verbose=TRUE, 
-                             opts=paste0("-f ", int, " -v"),
-                             inskull_mesh = FALSE,
-                             refill = refill,
-                             refill.thresh = .75, # used 0.5
-                             presmooth=presmooth)   
-          
+          checkfile = paste0(outfile, ".nii.gz")
+          if (!file.exists(checkfile)){
+            x = CT_Skull_Strip(img = img, 
+                               outfile = outfile, 
+                               retimg=FALSE, verbose=TRUE, 
+                               opts=paste0("-f ", int, " -v"),
+                               inskull_mesh = FALSE,
+                               refill = refill,
+                               refill.thresh = .75, # used 0.5
+                               presmooth=presmooth)   
+          } else {
+            print(checkfile)
+          }
 
         }
 #         x = CT_Skull_Strip(img = img, 

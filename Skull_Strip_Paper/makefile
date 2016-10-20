@@ -1,2 +1,9 @@
-CT_Skull_Stripping.pdf: CT_Skull_Stripping.Rnw
-	Rscript -e "library(knitr); knit2pdf('CT_Skull_Stripping.Rnw')"
+date=2015Jan12
+stub=CT_Skull_Stripping_${date}
+${stub}.pdf: ${stub}.Rnw
+	Rscript -e "library(knitr); knit('${stub}.Rnw')";
+	pdflatex ${stub}
+	bibtex ${stub}
+	pdflatex ${stub}
+	pdflatex ${stub}
+	open ${stub}.pdf

@@ -868,7 +868,7 @@ $$
 $$
 and the Dice Similarity Index (DSI) is defined as
 $$
-\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im} - \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right)}.
+\frac{2 \times \#\text{TP} }{ \# \text{TP} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}.
 $$
 
 

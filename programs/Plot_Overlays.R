@@ -4,7 +4,7 @@ library(fslr)
 library(oro.dicom)
 library(bitops)
 library(arules)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
@@ -103,7 +103,7 @@ irow = 1
 #   dev.off()
 #   print(irow)
 # }
-
+pngnames = NULL
 for (irow in seq(nrow(ssdf))) {
   
   ss.f = ssdf$ssimg[irow]
@@ -120,11 +120,13 @@ for (irow in seq(nrow(ssdf))) {
   pngname = mid.folder(pngname, "overlay", level=2)
 
   dir.create(dirname(pngname))
-
-  png(pngname, res=600, height=7, width=7, units = "in")
-    mask.overlay(img, ssimg, text= paste0("SS ", text, "\n", id),
-      text.cex = 1)
-  dev.off()
+  if (!file.exists(pngname)){
+    png(pngname, res=600, height=7, width=7, units = "in")
+      mask.overlay(img, ssimg, text= paste0("SS ", text, "\n", id),
+        text.cex = 1)
+    dev.off()
+  }
+  pngnames = c(pngnames, pngname)
   print(irow)
 }
 

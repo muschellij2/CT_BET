@@ -1,0 +1,277 @@
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/Overlap_Statistics.Rda")
+dir()
+ls()
+ddf
+ddf$id
+ddf$img
+ddf$id
+unique(ddf$id)
+cat(unique(ddf$id), sep="\n")
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/ICC_data.Rda")
+ls()
+head(ddf)
+dim(ddf)
+ls()
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/ICC_data.Rda")
+q()
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+ls()
+ddf
+head(ddf)
+library(plyr)
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+long = ddf %>% #
+		select(id, dice, sens, spec, accur, ratio) %>% #
+		gather(key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(long, .(measure), summarise,#
+      mean=mean(value),#
+      lower = t.test(value)$conf.int[1],#
+      upper = t.test(value)$conf.int[2],#
+      sd=sd(value),#
+      median=median(value)#
+)
+library(dplyr)
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+long = ddf %>% #
+		select(id, dice, sens, spec, accur, ratio) %>% #
+		gather(key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(long, .(measure), summarise,#
+      mean=mean(value),#
+      lower = t.test(value)$conf.int[1],#
+      upper = t.test(value)$conf.int[2],#
+      sd=sd(value),#
+      median=median(value)#
+)
+ests
+library(tidyr)
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+long = ddf %>% #
+		select(id, dice, sens, spec, accur, ratio) %>% #
+		gather(key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(long, .(measure), summarise,#
+      mean=mean(value),#
+      lower = t.test(value)$conf.int[1],#
+      upper = t.test(value)$conf.int[2],#
+      sd=sd(value),#
+      median=median(value)#
+)
+ests
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+long = ddf %>% #
+		select(id, dice, sens, spec, accur, ratio) %>% #
+		gather(key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(long, .(measure), summarise,#
+      mean=mean(value),#
+      lower = t.test(value)$conf.int[1],#
+      upper = t.test(value)$conf.int[2],#
+      sd=sd(value),#
+      median=median(value)#
+)#
+rownames(ests) = ests$measure#
+ests$measure = NULL
+ests
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+long = ddf %>% #
+		select(id, dice, sens, spec, accur, ratio) %>% #
+		gather(key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)#
+rownames(ests) = ests$measure#
+ests$measure = NULL
+ests
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/Intersection_Overlap_Statistics.Rda")
+ls()
+d = ddf
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/Union_Overlap_Statistics.Rda")
+head(ddf)
+head(d)
+head(ddf)
+head(d)
+d - ddf
+d[, c("dice", "jaccard")] - ddf[, c("dice", "jaccard")]
+as.matrix(d[, c("dice", "jaccard")]) - as.matrix(ddf[, c("dice", "jaccard")])
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/Overlap_Statistics.Rda")
+ddf$truevol
+ddf$truevol/ ddf$estvol
+ddf$estvol
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)
+library(plyr)
+library(tidyr)
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)
+ests
+class(ests)
+class(ests) = "matrix"
+for (icol in colnames(ests)){#
+	ests[, icol] = sprintf("%4.4f", ests[, icol])	#
+}
+ests
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)#
+#
+rownames(ests) = ests$measure#
+ests$measure = NULL#
+#for (icol in colnames(ests)){#
+	ests[, 'sd'] = sprintf("%4.4f", ests[, "sd"])	#
+#}
+ests
+ests$sd
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)#
+#
+rownames(ests) = ests$measure#
+ests$measure = NULL
+library(plyr)
+library(tidyr)
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),3),#
+      median=round(median(value), 3)#
+)#
+#
+rownames(ests) = ests$measure#
+ests$measure = NULL
+ests
+fname = file.path(resdir, "AM_NU_Overlap_Statistics.Rda")#
+load(fname)#
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2#
+ddf$diff = (ddf$am_vol - ddf$nat_vol)#
+ddf$ratio = ddf$am_vol / ddf$nat_vol#
+ddd = ddf[, c("dice", "sens", "spec", "accur", "ratio")]#
+est.long = gather(data=ddd, key=measure, value=value, dice, #
+			sens, spec, accur, ratio)#
+#
+ests = ddply(est.long, .(measure), summarise,#
+      mean= round(mean(value), 3),#
+      lower = round(t.test(value)$conf.int[1], 3),#
+      upper = round(t.test(value)$conf.int[2], 3),#
+      sd= round(sd(value),4),#
+      median=round(median(value), 3)#
+)#
+#
+rownames(ests) = ests$measure#
+ests$measure = NULL#
+#for (icol in colnames(ests)){#
+	ests[, 'sd'] = sprintf("%4.4f", ests[, "sd"])	#
+#}
+ests
+load("/Users/johnmuschelli/Dropbox/CTR/DHanley/CT_Registration/Final_Brain_Seg/results/AM_NU_Overlap_Statistics.Rda")
+ddf$am_vol
+cor.test(ddf$am_vol, ddf$nat_vol)
+ctest cor.test(ddf$am_vol, ddf$nat_vol)
+ctest = cor.test(ddf$am_vol, ddf$nat_vol)
+ctest$estimate
+round(ctest[['estimate']], 3)
+ctest$conf.int
+load("/Users/johnmuschelli/Dropbox/ctr/DHanley/CT_Registration/Final_Brain_Seg/results/Overlap_Statistics.Rda")
+ls()
+ddf
+dim(ddf)
+head(ddf)
+ddf$pid
+length(unique(ddf$pid)
+)
+q('no')

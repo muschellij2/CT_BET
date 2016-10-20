@@ -5,7 +5,7 @@ library(oro.dicom)
 library(bitops)
 library(arules)
 library(plyr)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
@@ -87,8 +87,21 @@ df = merge(df, ssdf, all.x=TRUE)
 
 df$hdr = file.path(dirname(df$img), "Sorted", 
                    paste0(nii.stub(df$img, bn=TRUE), "_Header_Info.Rda"))
+df$pid = sapply(strsplit(df$id, "_"), `[`, 1)
 
 
+######################
+# Keeping only one scan per person
+######################
+df = ddply(df, .(pid), function(x){
+  x = x[ x$id == x$id[1], ]
+  x
+})
+
+n.pid = length(unique(df$pid))
+n.img = length(unique(df$id))
+
+stopifnot(n.pid == n.img)
 
 twoXtwo2 = function(x, y, dnames=c("x", "y")){
     ### could put a length(x) == length(y) check 
@@ -176,8 +189,8 @@ sim <-  function(dman, dauto, dim.dman, dim.dauto){
 	res <- list(dice=dice, jaccard=jaccard, 
 		sens=sens, spec = spec, accur=accur, truevol = truevol,
 		estvol = estvol)
-  cat("\n")
-  print(res)
+  # cat("\n")
+  # print(res)
 	return(res)
 }
 
@@ -200,7 +213,7 @@ for (iimg in seq_along(splitdf)){
   
 	results = laply(dd$ssimg, function(x){
 		ss = readNIfTI(x, reorient=FALSE)
-		ss = ss > 0		
+		ss = ss > 0
 		truevol = get_roi_vol(img = ss, dcmtables = dcmtables)$truevol
 		dman = c(roi)
 		dauto = c(ss)
@@ -208,15 +221,15 @@ for (iimg in seq_along(splitdf)){
 		dim.dauto = dim(ss)
 
 		res = sim(dman, dauto, dim.dman, dim.dauto)	
-    res$estvol = truevol
+	res$estvol = truevol
 		return(res)
 	}, .progress = "text")
 
-	dd = cbind(dd, results)
+  dd = cbind(dd, results)
   dd$truevol = vol.roi
 
-	splitdf[[iimg]] = dd
-	print(iimg)
+  splitdf[[iimg]] = dd
+  print(iimg)
 }
 
 ddf = do.call("rbind", splitdf)

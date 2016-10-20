@@ -1,0 +1,243 @@
+## ----label=opts, results='hide', echo=FALSE, message = FALSE, warning=FALSE----
+library(knitr)
+opts_chunk$set(echo=FALSE, prompt=FALSE, message=FALSE, warning=FALSE, comment="", results='hide')
+
+## ----label=setup, echo=FALSE---------------------------------------------
+rm(list=ls())
+library(cttools)
+library(fslr)
+library(oro.dicom)
+library(bitops)
+library(arules)
+library(plyr)
+library(reshape2)
+library(ggplot2)
+library(matrixStats)
+library(gridExtra)
+library(qdap)
+library(ICC)
+options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+
+# username <- Sys.info()["user"][[1]]
+rootdir = path.expand("~/CT_Registration")
+
+ROIformat = FALSE
+study = "Original_Images"
+if (ROIformat) {
+  study = "ROI_images"
+}
+
+basedir = file.path(rootdir, "Final_Brain_Seg")
+resdir = file.path(basedir, "results")
+paperdir = file.path(basedir, "Skull_Strip_Paper")
+figdir = file.path(paperdir, "figure")
+
+homedir <- file.path(basedir, study)
+
+rdas = list.files(path=homedir, pattern=".*_CT_.*Header_Info.Rda", 
+                  full.names = TRUE, recursive = TRUE)
+ostubs = gsub("_Header_Info.Rda", "", rdas, fixed=TRUE)
+stubs = gsub("_ungantry", "", ostubs)
+stopifnot(all(stubs %in% ostubs))
+rdas = rdas[!grepl("antry", rdas)]
+
+stopifnot(!any(grepl("antry", rdas)))
+rdas = rdas[grepl("Sorted", rdas)]
+rda = data.frame(rda=rdas, stringsAsFactors = FALSE)
+rda$id = basename(rda$rda)
+rda$id = gsub("(.*)_Header_Info.*", "\\1", rda$id)
+
+fname = file.path(resdir, "Overlap_Statistics.Rda")
+load(fname)
+
+img.id = unique(basename(ddf$img))
+img.id = nii.stub(img.id)
+rda = rda[ rda$id %in% img.id, ]
+rownames(rda) = NULL
+
+x = sapply(rda$rda, function(x){
+  load(x)
+  st = dcmtables[, "0018-0050-SliceThickness"]
+  ust = unique(st)
+  lust = length(ust)
+if (lust > 1){
+  print(ust)
+}
+  lust
+})
+
+n.var.slice = sum(x > 1)
+
+proper = function(mystr) {
+  x= strsplit(mystr, " ")[[1]]
+  paste(toupper(substr(x, 1, 1)), tolower(substring(x, 2)),
+        sep= "", collapse=" ")
+}
+uid = unique(basename(ddf$img))
+nscans = length(uid)
+num_scans = proper(replace_number(nscans))
+
+pid = gsub("(\\d\\d\\d-(\\d|)\\d\\d\\d).*", "\\1", uid)
+pid = unique(pid)
+npt = length(pid)
+ctr = unique(gsub("(\\d\\d\\d)-.*", "\\1", uid))
+n.ctr = length(ctr)
+
+ddf = ddf[ !grepl("refill", ddf$ssimg), ]
+
+cs =  sapply(ddf, class) == "list"
+cs = names(cs)[cs]
+for (icol in cs){
+  ddf[, icol] = unlist(ddf[, icol])
+}
+
+d = ddf
+d$truevol = d$estvol = NULL
+makeint = function(data){
+  data$scen = gsub(".*_SS_(.*)_Mask.*", "\\1", data$ssimg )
+  data$smooth = !grepl("nopresmooth", data$scen)
+  data$smooth = revalue(as.character(data$smooth), 
+                     c("TRUE"="Smoothed", "FALSE"="Unsmoothed"))
+  data$int = gsub("_nopresmooth", "", data$scen)
+  data
+}
+ddf = makeint(ddf)
+ddf$diffvol = (ddf$truevol - ddf$estvol) / 1000
+ddf$absdiff = abs(ddf$diffvol)
+
+long = melt(d, id.vars = c("id", "img", "rimg", 
+	"ssimg", "hdr", "pid"))
+
+long = makeint(long)
+long$id = as.numeric(factor(long$id))
+
+runcols =  c("dice", "jaccard", "sens", "spec", "accur", "absdiff")
+rc = runcols[ !runcols %in% c("absdiff")]
+
+wmax = function(x){
+	which(x == max(x))
+}
+x = ddf[ ddf$img == ddf$img[1], ]
+
+res = ddply(ddf, .(img), function(x){
+	print(x$id[1])
+	xx = sapply(x[, rc], wmax)
+	xx = x$scen[xx]
+	print(xx)
+	names(xx) = rc
+	xx
+})
+
+results= sapply(res[, rc], table)
+maxtab = sapply(results, function(x) {
+	names(sort(x, decreasing=TRUE)[1])
+})
+
+res = ddply(ddf, .(scen), function(x){
+	cmin = colMins(as.matrix(x[, runcols]))
+	cmax = colMaxs(as.matrix(x[, runcols]))
+	cmean = colMeans(as.matrix(x[, runcols]))
+	cmed = colMedians(as.matrix(x[, runcols]))
+	xx = data.frame(t(cbind(cmin, cmax, cmean, cmed)))
+	xx$run = c("min", "max", "mean", "median")
+	xx
+})
+
+
+nospec = long[ long$variable %in% c("accur", "sens"),]
+
+long = long[ long$variable != "jaccard", ]
+
+long$variable = revalue(long$variable, c("sens" = "Sensitivity",
+                         "spec" = "Specificity",
+                         "accur" = "Accuracy", 
+                         "dice" = "Dice Similarity Index"))
+
+
+
+
+## ----tests---------------------------------------------------------------
+
+mytest = function(...){
+  wilcox.test(...)
+}
+all.smooth.tests = ddply(long, .(int), function(df){
+  p.value= ddply(df, .(variable), function(x){
+    stats = lapply(list(median, mean, sd), function(func){
+      res = aggregate(value ~ smooth, func, data=x)
+    })
+    names(stats) = c("median", "mean", "sd")
+    cn = stats[[1]]$smooth
+    stats = lapply(stats, function(x){
+      x$smooth = NULL
+      x = c(t(x))
+      names(x) = cn
+      x
+    })
+    stats = unlist(stats)
+    wt = wilcox.test(value ~ smooth, data=x, paired=TRUE)
+    tt = t.test(value ~ smooth, data=x, paired=TRUE)
+    return(c(wt.p.value=wt$p.value, tt.p.value = tt$p.value,  stats))
+  })
+}, .progress="text")
+
+
+all.int.tests = ddply(long, .(smooth), function(df){
+  df = df[df$int %in% c("0.01", "0.1"), ]
+  p.value= ddply(df, .(variable), function(x){
+    stats = lapply(list(median, mean, sd), function(func){
+      res = aggregate(value ~ int, func, data=x)
+    })
+    names(stats) = c("median", "mean", "sd")
+    cn = stats[[1]]$int
+    stats = lapply(stats, function(x){
+      x$int = NULL
+      x = c(t(x))
+      names(x) = cn
+      x
+    })
+    stats = unlist(stats)
+    wt = wilcox.test(value ~ int, data=x, paired=TRUE)
+    tt = t.test(value ~ int, data=x, paired=TRUE)
+    return(c(wt.p.value=wt$p.value, tt.p.value = tt$p.value,  stats))
+  })
+}, .progress="text")
+
+smooth = all.int.tests[ all.int.tests$smooth == "Smoothed",]
+pval <- function(pval) {
+  x <- ifelse(pval < 0.001, "< 0.001", sprintf("= %03.3f", pval))
+	return(x)
+}
+smooth$wt.p.value = pval(smooth$wt.p.value)
+num = sapply(smooth, class) == "numeric"
+smooth[, num] = round(smooth[, num], 4)
+rownames(smooth) = smooth$variable
+smooth$variable = smooth$smooth = NULL
+smooth.dice = smooth["Dice Similarity Index",]
+
+## ------------------------------------------------------------------------
+fname = file.path(resdir, "Longitudinal_Skull_Strip_Data.Rda")
+load(fname)
+df = all.df[ grep("SS_0.01", all.df$fname, fixed=TRUE), ]
+
+total.N = nrow(df)
+
+
+fname = file.path(resdir, "ICC_data.Rda")
+load(fname)
+npt.icc = smod$ngrps['id']
+n.mod = smod$devcomp$dims['n']
+
+num_scans.icc = nrow(ddf) 
+fail = total.N - num_scans.icc
+pct.fail = round(fail/total.N * 100, 1)
+
+icc.ci = ICCest("id", "truevol", data=ddf)
+
+## ----check_p-------------------------------------------------------------
+stopifnot(all(all.smooth.tests$wt.p.value < 0.01))
+
+## ----figcap_CT_Skull_Stripping_Figure2-----------------------------------
+CT_Skull_Stripping_Figure2 = paste0("{\\bf Performance Metric Distribution for Different Pipelines.} ", 
+"Panel~\\protect\\subref*{unsmoothed} displays the boxplots for performance measures when running the pipeline with a different fractional intensity (FI), using smoothed data (top) or unsmoothed data (bottom).  Panel~\\protect\\subref*{smoothed} presents the smoothed data only, rescaled to show discrimination between the different FI.", " Overall, FI of $0.01$ and $0.1$ perform better than $0.35$ in all categories other than specificity.  Using smoothed data improves performance in all performance metrics, markedly when an FI of $0.35$ is used.  Panel~\\protect\\subref*{smoothed} demonstrates that using an FI of $0.01$ on smoothed data has high performance on all measures.  " )
+

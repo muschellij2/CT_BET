@@ -1,0 +1,132 @@
+rm(list=ls())
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+library(plyr)
+# username <- Sys.info()["user"][[1]]
+rootdir = path.expand("~/Dropbox/CTR/DHanley/CT_Registration")
+basedir = file.path(rootdir, "Final_Brain_Seg")
+am_dir <- file.path(basedir, "AM_ROI_images")
+nat_dir <- file.path(basedir, "ROI_images")
+
+paperdir = file.path(basedir, "Skull_Strip_Paper")
+figdir = file.path(paperdir, "figure")
+
+resdir = file.path(basedir, "results")
+
+load(file=file.path(resdir, "AM_NU_Overlap_Statistics.Rda"))
+
+ddf$avg = (ddf$am_vol + ddf$nat_vol)/2
+ddf$diff = (ddf$am_vol - ddf$nat_vol)
+ddf$ratio = ddf$am_vol / ddf$nat_vol
+
+tsize = 16
+
+
+q = qplot(y=diff, x=avg, data=ddf, geom=c("point"), se=FALSE) + 
+  geom_smooth(aes(colour="LOESS Smoother"), se=FALSE)
+q = q + xlab("Average of Reader 1 and 2 ICV Estimate (mL)") + 
+  ylab("Reader 2 - Reader 1 ICV Estimate (mL)") + 
+  theme(legend.position = c(0.5, 0.25),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_rect(fill="transparent", 
+                                  color="transparent"),
+        legend.text = element_text(size=tsize+2), 
+        legend.title = element_text(size=tsize),
+        title = element_text(size=tsize),
+        strip.text = element_text(size = tsize+4),
+        axis.text  = element_text(size=tsize-2))  +
+  scale_colour_manual("", 
+                      values = c("LOESS Smoother"="blue"),
+                      guide = guide_legend(reverse=TRUE))   
+q = q + ggtitle("Bland-Altman Plot of Reader 1/2 ICV Estimates")
+q
+d = data.frame(label="B")
+q = q + geom_text(data=d, x = 1600, y = -33, size=20,
+                  aes(label=label), colour="black")
+pngname = file.path(figdir, "BA_Plot_Readers.png")
+png(pngname, res=600, height=7, width=7, units = "in")
+  print(q)
+dev.off()
+
+lm_eqn = function(m) {
+  l <- list(a = format(coef(m)[1], digits = 2),
+            b = format(abs(coef(m)[2]), digits = 2),
+            r2 = format(summary(m)$r.squared, digits = 3));
+  
+  if (coef(m)[2] >= 0)  {
+    eq <- substitute(italic(y) == a + b %.% italic(x),l)
+  } else {
+    eq <- substitute(italic(y) == a - b %.% italic(x),l)    
+  }
+  
+  as.character(as.expression(eq));                 
+}
+
+mod = lm(nat_vol ~ am_vol, data=ddf)
+cmod = coef(mod)
+q = qplot(y=am_vol, x=nat_vol, data=ddf, geom=c("point"), 
+	se=FALSE) + geom_abline(aes(intercept=0, slope = 1, colour= "X = Y")) + 
+  geom_smooth(aes(colour="LOESS Smoother"), se=FALSE)
+lab = paste0("y = ", round(cmod["(Intercept)"], 3), ' + ', 
+             round(cmod["am_vol"], 3), "x")
+labdf = data.frame(nat_vol = 1300, am_vol = 1600, label = lab, 
+                   stringsAsFactors = FALSE)
+q = q +  
+  geom_text(aes(label = label), data=labdf, size=7)
+q = q + xlab("Reader 1 ICV Estimate (mL)")  + ylab("Reader 2 ICV Estimate (mL)") +
+  scale_colour_manual("", 
+                      values = c("LOESS Smoother"="blue",
+                                 "X = Y"="red"),
+                      guide = guide_legend(reverse=TRUE))  + 
+theme(legend.position = c(0.5, 0.25),
+      legend.background = element_rect(fill="transparent"),
+      legend.key = element_rect(fill="transparent", 
+                                color="transparent"),
+      legend.text = element_text(size=tsize+2), 
+      legend.title = element_text(size=tsize),
+      title = element_text(size=tsize),
+      strip.text = element_text(size = tsize+4),
+      axis.text  = element_text(size=tsize-2))
+q = q + ggtitle("Comparison of Reader 1 and Reader 2 ICV Estimates")
+q
+d = data.frame(label="A")
+q = q + geom_text(data=d, x = 1600, y = 1100, size=20,
+                  aes(label=label), colour="black")
+pngname = file.path(figdir, "Corr_Plot_Readers.png")
+png(pngname, res=600, height=7, width=7, units = "in")
+  print(q)
+dev.off()
+
+long = ddf %>% 
+		select(id, dice, sens, spec, accur, ratio) %>% 
+		gather(key=measure, value=value, dice, 
+			sens, spec, accur, ratio)
+
+ests = ddply(long, .(measure), summarise,
+      mean=mean(value),
+      lower = t.test(value)$conf.int[1],
+      upper = t.test(value)$conf.int[2],
+      sd=sd(value),
+      median=median(value)
+)
+
+
+p = qplot(y=value, x=measure, data=long, geom=c("boxplot"))
+print(p)
+print({p + ylim(c(0, 1.01))})
+
+long$measure = revalue(long$measure, 
+	c(dice = "Dice Similiarity Index",
+		sens = "Sensitivity", 
+		spec = "Specificity", 
+		accur = "Accuracy",
+		ratio = "Ratio of Volumes"))
+
+p = ggplot(aes(y=value, x=measure), data=long) + 
+	geom_boxplot(outlier.shape = NA) +
+	geom_point(position = position_jitter(w = 0.1, h = 0)) + xlab("")
+p
+p + ylim(c(0.95, 1))
+p + ylim(c(0, 1))

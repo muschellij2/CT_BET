@@ -4,7 +4,7 @@ library(fslr)
 library(oro.dicom)
 library(bitops)
 library(arules)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 options(fsl.path='/usr/local/fsl')
 
 # username <- Sys.info()["user"][[1]]

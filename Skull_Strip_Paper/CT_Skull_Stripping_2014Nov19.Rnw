@@ -826,13 +826,12 @@ $$
 $$
 overall accuracy is defined as:
 $$
-\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left[ (I_{ia} \times I_{im}) + \left\{ (1-I_{ia}) \times (1- I_{im} ) \right\} \right] }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}},
+\frac{\# \text{TN} + \text{TP} }{\# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ \sum_{i=1}^{V} \left[ (I_{ia} \times I_{im}) + \left\{ (1-I_{ia}) \times (1- I_{im} ) \right\} \right] }{ V},
 $$
 and the Dice Similarity Index (DSI) is defined as
 $$
-\frac{2 \times \#\text{TP} }{ \# \text{TN} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}.
+\frac{2 \times \#\text{TP} }{ \# \text{TP} + \text{FN} + \text{TP} + \text{FP}} = \frac{ 2 \times \sum_{i=1}^{V} \left( I_{ia} \times I_{im}\right) }{\sum_{i=1}^{V} I_{ia}  + \sum_{i=1}^{V} I_{im}}.
 $$
-
 
 
 

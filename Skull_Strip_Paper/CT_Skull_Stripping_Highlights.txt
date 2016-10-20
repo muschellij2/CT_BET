@@ -1,0 +1,4 @@
+- We present a fully automated brain extraction procedure for CT scans adapting the BET from FSL
+- We investigated the effect smoothing the data before using BET; smoothing improves performance
+- We varied the fractional intensity using 0.01, 0.1, and 0.35.  0.01 and 0.1 performed best
+- We validated against a gold standard – accuracy and Dice overlap of automated segmentation was high

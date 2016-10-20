@@ -1,0 +1,19 @@
+Paper 1
+
+Additionally, compared with manual segmentation the particle filter accurately segmented brain and fluid volumes from CT scans of 5 pediatric patients with hydrocephalus (p < 0.001)
+
+
+We segmented 5 CT data sets of pediatric hydrocepha- lus. We employed the parameters optimized using our constructed CT ground truth image (see Appendix)
+	 - supervised
+
+Our method does require user interference in the seg- mentation. We did not completely analyze the effects of different initial inputs on the results of the final segmenta- tion.
+
+nevertheless, extending our efforts to a true 3D segmentation tool, with only one seed point required, would improve usability and poten- tially increase accuracy.	 
+
+
+Paper 2
+In this present study, brain and fluid volumes were measured in 33 of these patients, 26 of whom required surgical treatment for hydrocephalus
+
+A particle filter image segmentation algorithm was used to calculate brain and fluid volumes for all images. (Paper 1)
+
+Using the probability maps and a user-selected seed point, a particle filter is then used to extract the brain from surrounding tissues by tracking the outer edge of the brain. Finally, the initial probability maps of brain and fluid are used to segment the extracted brain into brain and fluid volumes.

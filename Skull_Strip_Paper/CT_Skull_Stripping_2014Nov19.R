@@ -20,7 +20,7 @@ library(gridExtra)
 library(qdap)
 library(ICC)
 library(xtable)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/CT_Registration")

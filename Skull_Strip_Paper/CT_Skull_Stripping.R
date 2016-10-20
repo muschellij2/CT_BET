@@ -18,7 +18,7 @@ library(ggplot2)
 library(matrixStats)
 library(gridExtra)
 library(qdap)
-options(matlab.path='/Applications/MATLAB_R2013b.app/bin')
+options(matlab.path='/Applications/MATLAB_R2014b.app/bin')
 
 # username <- Sys.info()["user"][[1]]
 rootdir = path.expand("~/CT_Registration")
