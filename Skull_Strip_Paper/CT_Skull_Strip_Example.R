@@ -241,7 +241,11 @@ CT_Skull_Strip <- function(
 
 # install.packages("fslr")
 # library(fslr)
-
-require(devtools)
-install_github("muschellij2/fslr")
+if (!require(fslr)) {
+  if (!require(devtools)) {
+    install.packages("devtools")
+  }
+  devtools::install_github("muschellij2/fslr")
+  library(fslr)
+}
 # CT_Skull_Strip(filename, outfile=brain_extracted_filename)
