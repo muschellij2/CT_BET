@@ -1,5 +1,4 @@
-# Thresholding Image to 0-100
-infile="Head_Image_1.nii.gz"
+# infile="Head_Image_1.nii.gz"
 # usage: ct_ss infile outfile
 ct_ss = function() {
     intensity=0.01
