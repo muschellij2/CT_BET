@@ -1,3 +1,4 @@
+#!/bin/bash
 # infile="Head_Image_1.nii.gz"
 # usage: ct_ss infile outfile
 ct_ss = function() {
