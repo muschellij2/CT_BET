@@ -2,6 +2,7 @@
 # infile="Head_Image_1.nii.gz"
 # usage: ct_ss infile outfile
 ct_ss = function() {
+ 
     intensity=0.01
     outfile="${2}"
     if [[ -z "${outfile}" ]]
@@ -27,3 +28,17 @@ ct_ss = function() {
     # Using the filled mask to mask original image
     fslmaths "${img}" -mas "${outfile}_Mask"  "${outfile}" 
 }
+
+### new implementation (coming soon)
+# CT Skull Stripping with FSL
+
+# Usage:
+#   ct_ss --infile=<infile> [--outfile=<outfile>]
+#   ct_ss -i <infile> [-o <outfile>]
+#   ct_ss -h | --help
+
+# Options:
+#   -h --help     Show this screen.
+#   -i --infile=<infile>  Input filename
+#   -o --outfile=<outfile>      Output filename
+#   
