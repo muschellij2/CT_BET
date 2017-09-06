@@ -1,12 +1,11 @@
 #!/bin/bash
 # infile="Head_Image_1.nii.gz"
 # usage: ct_ss infile outfile
-ct_ss = function() {
+function ct_ss() {
  
     intensity=0.01
     outfile="${2}"
-    if [[ -z "${outfile}" ]]
-        then
+    if [[ -z "${outfile}" ]]; then
         outfile=`echo "${infile}" | awk '{ gsub(/\\.nii/, "_SS.nii"); print }';`
     fi
 
