@@ -2,7 +2,7 @@
 # infile="Head_Image_1.nii.gz"
 # usage: ct_ss infile outfile
 function ct_ss() {
- 
+    infile="${1}"
     intensity=0.01
     outfile="${2}"
     if [[ -z "${outfile}" ]]; then
@@ -12,7 +12,7 @@ function ct_ss() {
     tmpfile=`mktemp`
 
     # Thresholding Image to 0-100
-    fslmaths "${img}" -thr 0.000000 -uthr 100.000000  "${outfile}" 
+    fslmaths "${infile}" -thr 0.000000 -uthr 100.000000  "${outfile}" 
     # Creating 0 - 100 mask to remask after filling
     fslmaths "${outfile}" -bin "${tmpfile}"; 
     fslmaths "${tmpfile}.nii.gz" -bin -fillh "${tmpfile}" 
@@ -25,7 +25,8 @@ function ct_ss() {
     # Using fslfill to fill in any holes in mask 
     fslmaths "${outfile}" -bin -fillh "${outfile}_Mask" 
     # Using the filled mask to mask original image
-    fslmaths "${img}" -mas "${outfile}_Mask"  "${outfile}" 
+    fslmaths "${infile}" -mas "${outfile}_Mask"  "${outfile}" 
+    echo "${outfile}"
 }
 
 ### new implementation (coming soon)
