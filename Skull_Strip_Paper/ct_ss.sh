@@ -6,7 +6,8 @@ function ct_ss() {
     intensity=0.01
     outfile="${2}"
     if [[ -z "${outfile}" ]]; then
-        outfile=`echo "${infile}" | awk '{ gsub(/\\.nii/, "_SS.nii"); print }';`
+        outfile=`echo "${infile}" | awk '{ gsub(/.gz/, ""); print }';`
+        outfile=`echo "${outfile}" | awk '{ gsub(/.nii/, "_SS"); print }';`
     fi
 
     tmpfile=`mktemp`
