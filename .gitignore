@@ -13,3 +13,4 @@ removers.txt
 programs/*.txt
 *.Rda
 results/*.csv
+.Rproj.user
